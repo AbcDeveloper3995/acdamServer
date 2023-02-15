@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 
+#FUNCION QUE RETORNA UN DICCIONARIO CON LOS DATOS PAGINADOS, EL TOTAL DE PAGINAS Y LA PAGINA ACTUAL
 def getElementosPaginados(paginaActual, model, serializador):
     data, paginador = {}, None
     if model.__name__ == 'Usuario':

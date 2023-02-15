@@ -90,8 +90,8 @@ class sectorViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
-        cargo = self.get_object(self.kwargs['pk'])
-        serializer = self.serializer_class(cargo)
+        sector = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(sector)
         return Response({'message': 'Detalles del sector', 'data': serializer.data}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
@@ -105,9 +105,9 @@ class sectorViewSet(viewsets.ModelViewSet):
         return Response({'message': 'Sector no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        cargo = self.get_queryset(pk)
-        if cargo:
-            cargo.delete()
+        sector = self.get_queryset(pk)
+        if sector:
+            sector.delete()
             return Response({'message': 'Sector eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Sector no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -149,9 +149,9 @@ class municipioViewSet(viewsets.ModelViewSet):
         return Response({'message': 'Municipio no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        cargo = self.get_queryset(pk)
-        if cargo:
-            cargo.delete()
+        municipio = self.get_queryset(pk)
+        if municipio:
+            municipio.delete()
             return Response({'message': 'Municipio eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Municipio no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -163,7 +163,7 @@ class utilizadorViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, pk=None):
         if pk is None:
-            return self.list_serializer_class.Meta.model.objects.all().values('id', 'nombre', 'tipo', 'fk_sector__nombre', 'tipoNoEstatal', 'tipoDerecho')
+            return self.list_serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
 
     def get_object(self, pk):
@@ -181,8 +181,8 @@ class utilizadorViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
-        cargo = self.get_object(self.kwargs['pk'])
-        serializer = self.serializer_class(cargo)
+        utilizador = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(utilizador)
         return Response({'message': 'Detalles del utilizador', 'data': serializer.data}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
@@ -196,9 +196,9 @@ class utilizadorViewSet(viewsets.ModelViewSet):
         return Response({'message': 'Utilizador no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        cargo = self.get_queryset(pk)
-        if cargo:
-            cargo.delete()
+        utilizador = self.get_queryset(pk)
+        if utilizador:
+            utilizador.delete()
             return Response({'message': 'Utilizador eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Utilizador no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -215,9 +215,11 @@ class representanteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, pk=None):
         if pk is None:
-            return self.list_serializer_class.Meta.model.objects.all().values('id', 'ci', 'nombre', 'apellidos', 'provincia','fk_municipio__nombre', 'fk_utilizador__nombre',
-                                                                              'fk_sector__nombre', 'direccion', 'nivelEscolaridad', 'codigo', 'email')
+            return self.list_serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
         serializer = self.list_serializer_class(self.get_queryset(), many=True)
@@ -230,19 +232,39 @@ class representanteViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Representante creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def retrieve(self, request, *args, **kwargs):
+        representante = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(representante)
+        return Response({'message': 'Detalles del representante', 'data': serializer.data}, status=status.HTTP_200_OK)
+
     def update(self, request, pk=None):
-        if self.get_queryset(pk):
+        representante = self.get_queryset(pk)
+        if representante:
             serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
             if serializer.is_valid():
+                self.limpiarYasignarCamposMTM(representante.fk_municipio, request.data['fk_municipio'])
+                self.limpiarYasignarCamposMTM(representante.fk_utilizador, request.data['fk_utilizador'])
+                self.limpiarYasignarCamposMTM(representante.fk_sector, request.data['fk_sector'])
                 serializer.save()
                 return Response({'message': 'Representante modificado correctamente', 'data': serializer.data},
-                                status=status.HTTP_202_ACCEPTED)
+                                status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'Representante no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        cargo = self.get_queryset(pk)
-        if cargo:
-            cargo.delete()
+        representante = self.get_queryset(pk)
+        if representante:
+            representante.delete()
             return Response({'message': 'Representante eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Representante no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='paginado')
+    def paginado(self, request, *args, **kwargs):
+        data = getElementosPaginados(self.kwargs['pk'], Representante, self.list_serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
+
+    def limpiarYasignarCamposMTM(self, campo, lista):
+        campo.clear()
+        for i in lista:
+            campo.add(i)
+

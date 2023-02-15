@@ -82,20 +82,43 @@ class representanteListarSerializer(serializers.ModelSerializer):
         model = Representante
         fields = '__all__'
 
+    '''
+    FUNCION PARA RECORRER TODOS LOS ELEMENTOS DE UN CAMPO MANYTOMANY DE LA INSTANCIA Y ASIGNARLOS A UNA LISTA
+    ejemplo: (recorrer todos los municipios que atiende un representante; municipio es el campo MTM) 
+    '''
+    def recorridoMTM(self, campo):
+        aux = []
+        for i in campo.all():
+            data = {'id': i.id, 'nombre': i.nombre}
+            aux.append(data)
+        return aux
+
+    def getDescripcionNivelEscolar(self, instance):
+        if instance.nivelEscolaridad == '1':
+            return 'Tecnico'
+        elif instance.nivelEscolaridad == '2':
+            return '12 Grado'
+        elif instance.nivelEscolaridad == '3':
+            return 'Universitario'
+        elif instance.nivelEscolaridad == '4':
+            return 'Master'
+        elif instance.nivelEscolaridad == '5':
+            return 'Doctor'
+
     def to_representation(self, instance):
         return {
-            'id': instance['id'],
-            'ci': instance['ci'],
-            'nombre': instance['nombre'],
-            'apellidos': instance['apellidos'],
-            'provincia': instance['provincia'],
-            'municipio': instance['fk_municipio__nombre'],
-            'utilizador': instance['fk_utilizador__nombre'],
-            'sector': instance['fk_sector__nombre'],
-            'direccion': instance['direccion'],
-            'nivelEscolaridad': instance['nivelEscolaridad'],
-            'codigo': instance['codigo'],
-            'email': instance['email']
+            'id': instance.id,
+            'ci': instance.ci,
+            'nombre': instance.nombre,
+            'apellidos': instance.apellidos,
+            'provincia': instance.provincia,
+            'fk_municipio': self.recorridoMTM(instance.fk_municipio),
+            'fk_utilizador': self.recorridoMTM(instance.fk_utilizador),
+            'fk_sector': self.recorridoMTM(instance.fk_sector),
+            'direccion': instance.direccion,
+            'nivelEscolaridad': self.getDescripcionNivelEscolar(instance),
+            'codigo': instance.codigo,
+            'email': instance.email
                 }
 
 class representanteSerializer(serializers.ModelSerializer):

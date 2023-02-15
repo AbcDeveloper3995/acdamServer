@@ -49,7 +49,7 @@ class Logout(GenericAPIView):
 
 
 class usuarioViewSet(viewsets.GenericViewSet):
-    permission_classes = (IsAuthenticated,)
+    #permission_classes = (IsAuthenticated,)
     model = Usuario
     serializer_class = usuarioSerializer
     list_serializer_class = usuarioListarSerializer
