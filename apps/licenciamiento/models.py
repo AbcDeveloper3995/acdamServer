@@ -105,7 +105,7 @@ class Utilizador(models.Model):
     fk_sector = models.ForeignKey(Sector, verbose_name='Sector al que pertenece', blank=True, null=True, on_delete=models.CASCADE)
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
     tipo = models.CharField(verbose_name='Tipo', max_length=50, choices=CHOICE_UTILIZADOR, blank=False, null=False)
-    tipoNoEstatal = models.CharField(verbose_name='Tipo de no estatal', choices=CHOICE_UTILIZADOR_NO_ESTATAL, max_length=100, blank=False, null=False)
+    tipoNoEstatal = models.CharField(verbose_name='Tipo de no estatal', choices=CHOICE_UTILIZADOR_NO_ESTATAL, max_length=100, blank=True, null=True)
     tipoDerecho = models.CharField(verbose_name='Tipo de Derecho', max_length=50, choices=CHOICE_DERECHOS, blank=False, null=False)
     esActivo = models.BooleanField(default=True)
 

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -23,20 +24,22 @@ class customUsuarioSerializer(serializers.ModelSerializer):
 class usuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = '__all__'
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'groups', 'password', 'fk_cargo')
 
     def validate_password(self, value):
-        print(value)
         if len(value) < 8:
             raise serializers.ValidationError('La contrasena debe tener minimo 8 caracteres')
         return value
 
+    def validate_groups(self, value):
+        print(value)
+        return value
 
-    def create(self, validated_data):
-        usuario = Usuario(**validated_data)
-        usuario.set_password(validated_data['password'])
-        usuario.save()
-        return usuario
+    # def create(self, validated_data):
+    #     usuario = Usuario(**validated_data)
+    #     usuario.set_password(validated_data['password'])
+    #     usuario.save()
+    #     return usuario
 
 
 class updateUsuarioSerializer(serializers.ModelSerializer):
@@ -51,11 +54,34 @@ class usuarioListarSerializer(serializers.ModelSerializer):
 
 
     def to_representation(self, instance):
+        aux = []
+        for i in instance.groups.all():
+            data = {'id':i.id, 'name':i.name}
+            aux.append(data)
         return {
-            'id': instance['id'],
-            'Nombre': instance['first_name'],
-            'Apellidos': instance['last_name'],
-            'Nombre de usuario': instance['username'],
-            'Correo': instance['email'],
-            'Grupos': instance['groups__name']
+            'id': instance.id,
+            'first_name': instance.first_name,
+            'last_name': instance.last_name,
+            'username': instance.username,
+            'email': instance.email,
+            'password':instance.password,
+            'fk_cargo': instance.fk_cargo.nombre,
+            'groups': aux
+        }
+
+class grupoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
+
+
+
+class grupoListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'name': instance.name,
         }

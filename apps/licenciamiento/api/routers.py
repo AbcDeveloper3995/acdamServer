@@ -1,10 +1,12 @@
 from rest_framework.routers import DefaultRouter
 
-from apps.licenciamiento.apis.views import *
+from apps.licenciamiento.api.views import *
 
-# router = DefaultRouter()
-# router.register(r'liga', ligaViewSet, basename='ligaViewSet'),
-# router.register(r'equipo', equipoViewSet, basename='equipoViewSet'),
-# router.register(r'jugador', jugadorViewSet, basename='jugadorViewSet')
-#
-# urlpatterns = router.urls
+router = DefaultRouter()
+router.register(r'cargo', cargoViewSet, basename='cargoViewSet'),
+router.register(r'sector', sectorViewSet, basename='sectorViewSet'),
+router.register(r'municipio', municipioViewSet, basename='municipioViewSet')
+router.register(r'utilizador', utilizadorViewSet, basename='utilizadorViewSet')
+router.register(r'representante', representanteViewSet, basename='representanteViewSet')
+
+urlpatterns = router.urls

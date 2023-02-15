@@ -36,7 +36,7 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
     path('usuario/', include('apps.usuario.api.routers')),
-    # path('licenciamiento/', include('apps.licenciamiento.api.routers')),
+    path('licenciamiento/', include('apps.licenciamiento.api.routers')),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
