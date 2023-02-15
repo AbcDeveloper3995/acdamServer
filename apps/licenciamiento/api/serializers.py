@@ -6,12 +6,11 @@ from apps.licenciamiento.models import *
 class cargoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
-        fields = '__all__'
 
     def to_representation(self, instance):
         return {
-            'id': instance['id'],
-            'nombre': instance['nombre']
+            'id': instance.id,
+            'nombre': instance.nombre
                 }
 
 class cargoSerializer(serializers.ModelSerializer):

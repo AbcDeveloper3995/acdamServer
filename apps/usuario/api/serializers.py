@@ -52,7 +52,6 @@ class usuarioListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
 
-
     def to_representation(self, instance):
         aux = []
         for i in instance.groups.all():

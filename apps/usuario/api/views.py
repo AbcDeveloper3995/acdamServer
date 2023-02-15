@@ -13,6 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.usuario.api.serializers import *
+from apps.utils import getElementosPaginados
 
 
 class Login(TokenObtainPairView):
@@ -101,14 +102,7 @@ class usuarioViewSet(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['get'], url_path='paginado')
     def paginado(self, request, *args, **kwargs):
-        data = {}
-        paginaActual = self.kwargs['pk']
-        paginador = Paginator(Usuario.objects.filter(is_active=True), 25)
-        pagina = paginador.page(paginaActual)
-        usuario_serializer = self.list_serializer_class(pagina.object_list, many=True)
-        data['usuarios'] = usuario_serializer.data
-        data['totalPaginas'] = paginador.num_pages
-        data['paginaActual'] = paginaActual
+        data = getElementosPaginados(self.kwargs['pk'], Usuario, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
 class grupoViewSet(viewsets.ModelViewSet):
