@@ -166,6 +166,9 @@ class utilizadorViewSet(viewsets.ModelViewSet):
             return self.list_serializer_class.Meta.model.objects.all().values('id', 'nombre', 'tipo', 'fk_sector__nombre', 'tipoNoEstatal', 'tipoDerecho')
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
 
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
     def list(self, request, *args, **kwargs):
         serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -177,13 +180,18 @@ class utilizadorViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Utilizador creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def retrieve(self, request, *args, **kwargs):
+        cargo = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(cargo)
+        return Response({'message': 'Detalles del utilizador', 'data': serializer.data}, status=status.HTTP_200_OK)
+
     def update(self, request, pk=None):
         if self.get_queryset(pk):
             serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'message': 'Utilizador modificado correctamente', 'data': serializer.data},
-                                status=status.HTTP_202_ACCEPTED)
+                                status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'Utilizador no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -193,6 +201,11 @@ class utilizadorViewSet(viewsets.ModelViewSet):
             cargo.delete()
             return Response({'message': 'Utilizador eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Utilizador no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='paginado')
+    def paginado(self, request, *args, **kwargs):
+        data = getElementosPaginados(self.kwargs['pk'], Utilizador, self.list_serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
 
 #API DE REPRESENTANTE
 class representanteViewSet(viewsets.ModelViewSet):

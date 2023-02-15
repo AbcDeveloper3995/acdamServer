@@ -61,13 +61,14 @@ class utilizadorListarSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
+        print(instance.tipo)
         return {
-            'id': instance['id'],
-            'nombre': instance['nombre'],
-            'tipo': instance['tipo'],
-            'sector': instance['fk_sector__nombre'],
-            'tipoNoEstatal': instance['tipoNoEstatal'],
-            'tipoDerecho': instance['tipoDerecho'],
+            'id': instance.id,
+            'nombre': instance.nombre,
+            'tipo': 'Estatal' if instance.tipo == '1' else 'No estatal',
+            'fk_sector': instance.fk_sector.nombre,
+            'tipoNoEstatal': instance.tipoNoEstatal,
+            'tipoDerecho': instance.tipoDerecho,
                 }
 
 class utilizadorSerializer(serializers.ModelSerializer):
