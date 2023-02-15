@@ -72,8 +72,11 @@ class sectorViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, pk=None):
         if pk is None:
-            return self.list_serializer_class.Meta.model.objects.all().values('id', 'nombre')
+            return self.list_serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
         serializer = self.list_serializer_class(self.get_queryset(), many=True)
@@ -86,13 +89,18 @@ class sectorViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Sector creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def retrieve(self, request, *args, **kwargs):
+        cargo = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(cargo)
+        return Response({'message': 'Detalles del sector', 'data': serializer.data}, status=status.HTTP_200_OK)
+
     def update(self, request, pk=None):
         if self.get_queryset(pk):
             serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'message': 'Sector modificado correctamente', 'data': serializer.data},
-                                status=status.HTTP_202_ACCEPTED)
+                                status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'Sector no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -102,6 +110,11 @@ class sectorViewSet(viewsets.ModelViewSet):
             cargo.delete()
             return Response({'message': 'Sector eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Sector no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='paginado')
+    def paginado(self, request, *args, **kwargs):
+        data = getElementosPaginados(self.kwargs['pk'], Sector, self.list_serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
 
 #API DE MUNICIPIO
 class municipioViewSet(viewsets.ModelViewSet):
