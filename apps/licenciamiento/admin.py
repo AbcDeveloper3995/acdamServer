@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from apps.licenciamiento.models import *
 
-admin.site.register(Cargo)
 admin.site.register(Resolucion)
 admin.site.register(Concepto)
 admin.site.register(Sector)
@@ -19,3 +18,4 @@ admin.site.register(Anexo72Cimex)
 admin.site.register(Anexo72TRD)
 admin.site.register(Anexo71Musica)
 admin.site.register(Anexo71AudioVisual)
+admin.site.register(Proforma)

@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.licenciamiento.choices import *
+from apps.usuario.models import Usuario
 
 class Base(models.Model):
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
@@ -9,6 +10,7 @@ class Base(models.Model):
         abstract = True
 
 class ContratoLicenciaBase(models.Model):
+    fk_proforma = models.ForeignKey('Proforma', verbose_name='Proforma', blank=True, null=True, on_delete=models.CASCADE)
     fk_utilizador = models.ForeignKey('Utilizador', verbose_name='Utilizador', blank=True, null=True, on_delete=models.CASCADE)
     fk_representantesAsociados = models.ManyToManyField('Representante', verbose_name='Representantes Asociados', blank=True, null=True)
     fk_municipio = models.ForeignKey('Municipio', verbose_name='Municipio', blank=True, null=True, on_delete=models.CASCADE)
@@ -30,6 +32,7 @@ class Anexo72Base(models.Model):
     fk_contratoLicenciaEstatal= models.ForeignKey('ContratoLicenciaEstatal', verbose_name='Contrato licencia estatal al cual se vincula', blank=True, null=True, on_delete=models.CASCADE)
     periocidadPago = models.CharField(verbose_name='Periocidad de pago', choices=CHOICE_PERIOCIDAD_PAGO, max_length=50, blank=False, null=False)
     periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=False, null=False)
+    importe = models.IntegerField(verbose_name='Importe', blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -43,15 +46,6 @@ class Anexo71Base(models.Model):
 
     class Meta:
         abstract = True
-
-class Cargo(Base):
-    class Meta:
-        db_table = 'Cargo'
-        verbose_name = 'Cargos'
-        verbose_name_plural = 'Cargo'
-
-    def __str__(self):
-        return f'Cargo: {self.nombre}.'
 
 class Resolucion(Base):
     descripcion = models.CharField(verbose_name='Descripcion', max_length=200, blank=True, null=True)
@@ -123,6 +117,7 @@ class Representante(models.Model):
     fk_municipio = models.ManyToManyField(Municipio, verbose_name='Municipio')
     fk_utilizador = models.ManyToManyField(Utilizador, verbose_name='Utilizador')
     fk_sector = models.ManyToManyField(Sector, verbose_name='Sector que atiende')
+    fk_usuario = models.ForeignKey(Usuario, verbose_name='Atendido por', blank=True, null=True, on_delete=models.CASCADE)
     provincia = models.CharField(verbose_name='Provincia', max_length=50, choices=CHOICE_PROVINCIA, blank=False, null=False)
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
     apellidos = models.CharField(verbose_name='Apellidos', max_length=150, blank=False, null=False)
@@ -142,7 +137,7 @@ class Representante(models.Model):
     def __str__(self):
         return f'Representante: {self.nombre} {self.apellidos}.'
 
-class ContratoMandatoRepresentante(ContratoLicenciaBase):
+class ContratoMandatoRepresentante(models.Model):
     fk_representante = models.ForeignKey(Representante, verbose_name='Representante', related_name="representanteContrato", blank=True, null=True, on_delete=models.CASCADE)
     fk_utilizador = models.ForeignKey(Utilizador, verbose_name='Utilizador', blank=True, null=True, on_delete=models.CASCADE)
     fk_representantesAsociados = models.ManyToManyField('Representante', verbose_name='Representantes Asociados', blank=True, null=True)
@@ -286,4 +281,17 @@ class Anexo71AudioVisual(Anexo71Base):
 
     def __str__(self):
         return f'Anexo 71 audiovisual  vinculado al contrato {self.fk_contratoLicenciaEstatal.numeroLicencia}.'
+
+class Proforma(models.Model):
+    resolucion = models.IntegerField(verbose_name='Resolucion', blank=True, null=True)
+    nombre = models.CharField(verbose_name='Nombre', max_length=250, blank=False, null=False)
+    descripcion = models.TextField(verbose_name='Cuerpo de la proforma', blank=False, null=False)
+
+    class Meta:
+        db_table = 'Proforma'
+        verbose_name = 'Proforma'
+        verbose_name_plural = 'Proformas'
+
+    def __str__(self):
+        return f'Proforma: {self.nombre}.'
 

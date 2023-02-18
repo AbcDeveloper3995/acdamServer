@@ -2,23 +2,6 @@ from rest_framework import serializers
 
 from apps.licenciamiento.models import *
 
-#SERIALIZADORES DE LA API CARGO
-class cargoListarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cargo
-
-    def to_representation(self, instance):
-        return {
-            'id': instance.id,
-            'nombre': instance.nombre
-                }
-
-class cargoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cargo
-        fields = '__all__'
-
-
 #SERIALIZADORES DE LA API SECTOR
 class sectorListarSerializer(serializers.ModelSerializer):
     class Meta:

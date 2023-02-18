@@ -2,8 +2,23 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from apps.usuario.models import Usuario
+from apps.usuario.models import *
 
+#SERIALIZADORES DE LA API CARGO
+class cargoListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cargo
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre
+                }
+
+class cargoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cargo
+        fields = '__all__'
 
 class customTokenObtainPairSerializer(TokenObtainPairSerializer):
     pass

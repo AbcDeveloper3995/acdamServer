@@ -1,8 +1,16 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from apps.licenciamiento.models import Cargo
+class Cargo(models.Model):
+    nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
 
+    class Meta:
+        db_table = 'Cargo'
+        verbose_name = 'Cargos'
+        verbose_name_plural = 'Cargo'
+
+    def __str__(self):
+        return f'Cargo: {self.nombre}.'
 
 class Usuario(AbstractUser):
     fk_cargo = models.ForeignKey(Cargo, verbose_name='Cargo', blank=True, null=True, on_delete=models.CASCADE)
