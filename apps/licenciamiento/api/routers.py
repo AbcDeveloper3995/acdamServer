@@ -7,5 +7,7 @@ router.register(r'sector', sectorViewSet, basename='sectorViewSet'),
 router.register(r'municipio', municipioViewSet, basename='municipioViewSet')
 router.register(r'utilizador', utilizadorViewSet, basename='utilizadorViewSet')
 router.register(r'representante', representanteViewSet, basename='representanteViewSet')
+router.register(r'proforma', proformaViewSet, basename='proformaViewSet')
+router.register(r'contratoLicenciaEstatal', contratoLicenciaEstatalViewSet, basename='contratoLicenciaEstatalViewSet')
 
 urlpatterns = router.urls

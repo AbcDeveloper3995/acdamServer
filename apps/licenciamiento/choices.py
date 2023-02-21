@@ -1,11 +1,11 @@
 CHOICE_UTILIZADOR = (
-    (1, 'Estatal'),
-    (2, 'No estatal')
+    ('1', 'Estatal'),
+    ('2', 'No estatal')
 )
 
 CHOICE_RESOLUCION = (
-    (71, 'Resolucion 71'),
-    (72, 'Resolucion 72')
+    ('71', 'Resolucion 71'),
+    ('72', 'Resolucion 72')
 )
 
 CHOICE_DERECHOS = (
@@ -49,6 +49,7 @@ CHOICE_PROVINCIA = (
     ('CAV', 'Ciego de Avila'),
     ('TUN', 'Las Tunas'),
     ('HOL', 'Holguin'),
+    ('GRM', 'Granma'),
     ('STG', 'Santiago de Cuba'),
     ('GTM', 'Guantanamo'),
     ('IJV', 'Isla de la Juventud'),

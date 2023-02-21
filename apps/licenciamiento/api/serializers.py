@@ -44,7 +44,6 @@ class utilizadorListarSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-        print(instance.tipo)
         return {
             'id': instance.id,
             'nombre': instance.nombre,
@@ -108,3 +107,91 @@ class representanteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Representante
         fields = '__all__'
+
+#SERIALIZADORES DE CONTRATO LICENCIA ESTATAL
+class contratoLicEstatalListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoLicenciaEstatal
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'fk_utilizador': instance.fk_utilizador.nombre,
+                }
+
+class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoLicenciaEstatal
+        fields = '__all__'
+
+    # Funcion que retorna el nombre de la provincia en su formato largo
+    def formatoLargoProvincia(self, slug):
+        if slug == 'PR':
+            return 'Pinar del Rio'
+        elif slug == 'ART':
+            return 'Artemsia'
+        elif slug == 'MAY':
+            return 'Mayabeque'
+        elif slug == 'HAB':
+            return 'La Habanaaaaaa'
+        elif slug == 'MAT':
+            return 'Matanzas'
+        elif slug == 'VCL':
+            return 'Villa Clara'
+        elif slug == 'CFG':
+            return 'Cienfuegos'
+        elif slug == 'SS':
+            return 'Santi Spiritu'
+        elif slug == 'CAV':
+            return 'Ciego de Avila'
+        elif slug == 'TUN':
+            return 'Las Tunas'
+        elif slug == 'HOL':
+            return 'Holguin'
+        elif slug == 'GRM':
+            return 'Granma'
+        elif slug == 'STG':
+            return 'Santiago de Cuba'
+        elif slug == 'GTM':
+            return 'Guantanamo'
+        elif slug == 'IJV':
+            return 'Isla de la Juventud'
+
+    def to_representation(self, instance):
+        return {
+            'titulo': instance.fk_proforma.titulo,
+            'descripcion': instance.fk_proforma.descripcion,
+            'numeroLicencia': instance.numeroLicencia,
+            'codigo': instance.codigo,
+            'utilizador': instance.fk_utilizador.nombre,
+            'direccion': instance.direccion,
+            'provincia': self.formatoLargoProvincia(instance.provincia),
+            'municipio': instance.fk_municipio.nombre,
+            'nit': instance.nit,
+            'fecha': instance.fecha,
+            'subordinacion': instance.subordinacion,
+            'nombreFirmanteContrato': instance.nombreFirmanteContrato,
+            'cargoFirmanteContrato': instance.cargoFirmanteContrato,
+            'codigoREEUP': instance.codigoREEUP,
+            'cuentaBancaria': instance.cuentaBancaria
+                }
+
+#SERIALIZADORES DE PROFORMA
+class proformaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proforma
+        fields = '__all__'
+
+class proformaListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proforma
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'resolucion': instance.resolucion,
+            'titulo': instance.titulo,
+            'nombre': instance.nombre,
+                }

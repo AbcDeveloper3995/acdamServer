@@ -87,6 +87,8 @@ class Modalidad(Base):
         return f'Modalidad: {self.nombre}.'
 
 class Municipio(Base):
+    codigo = models.IntegerField(verbose_name='Codigo', blank=True, null=True)
+
     class Meta:
         db_table = 'Municipio'
         verbose_name = 'Municipios'
@@ -285,6 +287,7 @@ class Anexo71AudioVisual(Anexo71Base):
 class Proforma(models.Model):
     resolucion = models.IntegerField(verbose_name='Resolucion', blank=True, null=True)
     nombre = models.CharField(verbose_name='Nombre', max_length=250, blank=False, null=False)
+    titulo = models.CharField(verbose_name='Titulo', max_length=255, blank=True, null=True)
     descripcion = models.TextField(verbose_name='Cuerpo de la proforma', blank=False, null=False)
 
     class Meta:
@@ -294,4 +297,18 @@ class Proforma(models.Model):
 
     def __str__(self):
         return f'Proforma: {self.nombre}.'
+
+class ClasificadorProforma(models.Model):
+    fk_proforma = models.ForeignKey('Proforma', verbose_name='Proforma', blank=True, null=True, on_delete=models.CASCADE)
+    fk_sector = models.ForeignKey(Sector, verbose_name='Sector al que pertenece', blank=True, null=True, on_delete=models.CASCADE)
+    tipo = models.CharField(verbose_name='Tipo', max_length=50, choices=CHOICE_UTILIZADOR, blank=False, null=False)
+    tipoDerecho = models.CharField(verbose_name='Tipo de Derecho', max_length=50, choices=CHOICE_DERECHOS, blank=True, null=True)
+
+    class Meta:
+        db_table = 'ClasificadorProforma'
+        verbose_name = 'ClasificadorProforma'
+        verbose_name_plural = 'ClasificadorProformas'
+
+    def __str__(self):
+        return f'Clasificador: {self.fk_proforma.nombre}--{self.fk_sector.nombre}--{self.tipoDerecho}.'
 
