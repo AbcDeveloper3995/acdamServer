@@ -66,3 +66,21 @@ CHOICE_PERIOCIDAD_ENTREGA = (
     (2, 'Bianual musica grabada')
 
 )
+
+CHOICE_TIPO_PERSONA_JURIDICA = (
+    ('MIPYME', 'MIPYME'),
+    ('CNA', 'CNA')
+)
+
+CHOICE_TIPO_OBRA_COMERCIAL = (
+    ('Vivo', 'Vivo'),
+    ('Grabada', 'Grabada')
+)
+
+
+CHOICE_TIPO_PROFORMA = (
+    (1, 'Estatal'),
+    (2, 'No estatal persona juridica'),
+    (3, 'No estatal persona natural (Contrato Ejecucion Publica)'),
+    (4, 'No estatal persona natural (Contrato Comprador Vendedor de Disco)'),
+)

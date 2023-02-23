@@ -195,3 +195,86 @@ class proformaListarSerializer(serializers.ModelSerializer):
             'titulo': instance.titulo,
             'nombre': instance.nombre,
                 }
+
+#SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA JURIDICA
+class contratoLicenciaPersonaJuridicaListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoLicenciaPersonaJuridica
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'fk_utilizador': instance.fk_utilizador.nombre,
+                }
+
+class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoLicenciaPersonaJuridica
+        fields = '__all__'
+
+    # Funcion que retorna el nombre de la provincia en su formato largo
+    def formatoLargoProvincia(self, slug):
+        if slug == 'PR':
+            return 'Pinar del Rio'
+        elif slug == 'ART':
+            return 'Artemsia'
+        elif slug == 'MAY':
+            return 'Mayabeque'
+        elif slug == 'HAB':
+            return 'La Habanaaaaaa'
+        elif slug == 'MAT':
+            return 'Matanzas'
+        elif slug == 'VCL':
+            return 'Villa Clara'
+        elif slug == 'CFG':
+            return 'Cienfuegos'
+        elif slug == 'SS':
+            return 'Santi Spiritu'
+        elif slug == 'CAV':
+            return 'Ciego de Avila'
+        elif slug == 'TUN':
+            return 'Las Tunas'
+        elif slug == 'HOL':
+            return 'Holguin'
+        elif slug == 'GRM':
+            return 'Granma'
+        elif slug == 'STG':
+            return 'Santiago de Cuba'
+        elif slug == 'GTM':
+            return 'Guantanamo'
+        elif slug == 'IJV':
+            return 'Isla de la Juventud'
+
+    def to_representation(self, instance):
+        return {
+            'titulo': instance.fk_proforma.titulo,
+            'descripcion': instance.fk_proforma.descripcion,
+            'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
+            'descripcion3eraParte': instance.fk_proforma.descripcion3raParte,
+            'numeroLicencia': instance.numeroLicencia,
+            'codigo': instance.codigo,
+            'utilizador': instance.fk_utilizador.nombre,
+            'direccion': instance.direccion,
+            'provincia': self.formatoLargoProvincia(instance.provincia),
+            'municipio': instance.fk_municipio.nombre,
+            'nit': instance.nit,
+            'fecha': instance.fecha,
+            'tipo': instance.tipo,
+            'banco': instance.banco,
+            'tarifa': instance.tarifa,
+            'sucursal': instance.sucursal,
+            'nombreFirmanteContrato': instance.nombreFirmanteContrato,
+            'cargoFirmanteContrato': instance.cargoFirmanteContrato,
+            'codigoOnei': instance.codigoOnei,
+            'nombreComercial': instance.nombreComercial,
+            'provinciaComercial': instance.provinciaComercial,
+            'fk_municipioComercial': instance.fk_municipio.nombre,
+            'direccionComercial': instance.direccionComercial,
+            'actividadComercial': instance.actividadComercial,
+            'email': instance.email,
+            'telefono': instance.telefono,
+            'ejecucionObrasComercial': instance.ejecucionObrasComercial,
+            'representacionObrasEscenicas': instance.representacionObrasEscenicas,
+            'comunicacionObrasAudioVisuales': instance.comunicacionObrasAudioVisuales,
+                }

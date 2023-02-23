@@ -15,6 +15,7 @@ class ContratoLicenciaBase(models.Model):
     fk_representantesAsociados = models.ManyToManyField('Representante', verbose_name='Representantes Asociados', blank=True, null=True)
     fk_municipio = models.ForeignKey('Municipio', verbose_name='Municipio', blank=True, null=True, on_delete=models.CASCADE)
     resolucion = models.CharField(verbose_name='Resolucion', max_length=50, choices=CHOICE_RESOLUCION, blank=False, null=False)
+    banco = models.CharField(verbose_name='Banco', max_length=150, blank=True, null=True)
     provincia = models.CharField(verbose_name='Provincia', max_length=50, choices=CHOICE_PROVINCIA, blank=False, null=False)
     fecha = models.DateField(verbose_name='Fecha', auto_now=True)
     numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', blank=False, null=False)
@@ -180,6 +181,17 @@ class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
     banco = models.CharField(verbose_name='Banco', max_length=150, blank=False, null=False)
     sucursal = models.CharField(verbose_name='Sucursal', max_length=150, blank=False, null=False)
     tarifa = models.IntegerField(verbose_name='Tarifa', blank=False, null=False)
+    local = models.CharField(verbose_name='Local', max_length=150, blank=True, null=True)
+    nombreComercial = models.CharField(verbose_name='Nombre Comercial', max_length=150, blank=True, null=True)
+    direccionComercial = models.CharField(verbose_name='Direccion Comercial', max_length=150, blank=True, null=True)
+    provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
+    actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50,blank=True, null=True)
+    email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
+    telefono = models.IntegerField(verbose_name='Telefono', blank=True, null=True)
+    ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial',
+                                               choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
+    representacionObrasEscenicas = models.BooleanField(default=False)
+    comunicacionObrasAudioVisuales = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'ContratoLicenciaPersonaNatural'
@@ -193,6 +205,8 @@ class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
 class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
     fk_municipioComercial = models.ForeignKey(Municipio, verbose_name='Municipio', related_name="municipioComercial", blank=True, null=True, on_delete=models.CASCADE)
     codigoOnei = models.IntegerField(verbose_name='Codigo Onei', blank=False, null=False)
+    tipo = models.CharField(verbose_name='Tipo', max_length=150, choices=CHOICE_TIPO_PERSONA_JURIDICA, blank=True, null=True)
+    tarifa = models.IntegerField(verbose_name='Tarifa', blank=True, null=True)
     sucursal = models.CharField(verbose_name='Sucursal', max_length=150, blank=False, null=False)
     cuentaCorriente = models.IntegerField(verbose_name='Cuenta corriente', blank=False, null=False)
     nombreFirmanteContrato = models.CharField(verbose_name='Nombre de quien firma el contrato', max_length=150, blank=False, null=False)
@@ -201,11 +215,12 @@ class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
     nombreComercial = models.CharField(verbose_name='Nombre Comercial', max_length=150, blank=True, null=True)
     direccionComercial = models.CharField(verbose_name='Direccion Comercial', max_length=150, blank=True, null=True)
     provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
-    actividadComercial = models.CharField(verbose_name='Actividad Comercial', max_length=150, blank=True, null=True)
+    actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50, blank=True, null=True)
     email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
     telefono = models.IntegerField(verbose_name='Telefono', blank=True, null=True)
-    ejecucionObrasComercial = models.BooleanField(default=False)
-    tipoDerechoComercial = models.CharField(verbose_name='Tipo de Derecho Comercial', choices=CHOICE_DERECHOS, max_length=100, blank=True, null=True)
+    ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial', choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
+    representacionObrasEscenicas = models.BooleanField(default=False)
+    comunicacionObrasAudioVisuales = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'ContratoLicenciaPersonaJuridica'
@@ -289,6 +304,9 @@ class Proforma(models.Model):
     nombre = models.CharField(verbose_name='Nombre', max_length=250, blank=False, null=False)
     titulo = models.CharField(verbose_name='Titulo', max_length=255, blank=True, null=True)
     descripcion = models.TextField(verbose_name='Cuerpo de la proforma', blank=False, null=False)
+    descripcion2daParte = models.TextField(verbose_name='Cuerpo de la proforma seguda parte', blank=True, null=True)
+    descripcion3raParte = models.TextField(verbose_name='Cuerpo de la proforma tercera parte', blank=True, null=True)
+    tipo = models.IntegerField(verbose_name='Tipo Proforma', choices=CHOICE_TIPO_PROFORMA, blank=True, null=True)
 
     class Meta:
         db_table = 'Proforma'
@@ -310,5 +328,5 @@ class ClasificadorProforma(models.Model):
         verbose_name_plural = 'ClasificadorProformas'
 
     def __str__(self):
-        return f'Clasificador: {self.fk_proforma.nombre}--{self.fk_sector.nombre}--{self.tipoDerecho}.'
+        return f'Clasificador: {self.fk_proforma.nombre}--{self.tipo}.'
 
