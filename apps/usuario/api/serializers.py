@@ -30,6 +30,7 @@ class customUsuarioSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'id': instance.id,
             'nombre': instance.first_name,
             'apellidos': instance.last_name,
             'correo': instance.email,

@@ -57,6 +57,58 @@ class sectorViewSet(viewsets.ModelViewSet):
         data = getElementosPaginados(self.kwargs['pk'], Sector, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
+#API DE MODALIDAD
+class modalidadViewSet(viewsets.ModelViewSet):
+    serializer_class = modalidadSerializer
+    list_serializer_class = modalidadListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.list_serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Modalidad creada correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        sector = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(sector)
+        return Response({'message': 'Detalles de la modalidad', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        if self.get_queryset(pk):
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Modalidad modificada correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Modalidad no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        sector = self.get_queryset(pk)
+        if sector:
+            sector.delete()
+            return Response({'message': 'Modalidad eliminada correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Modalidad no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='paginado')
+    def paginado(self, request, *args, **kwargs):
+        data = getElementosPaginados(self.kwargs['pk'], Modalidad, self.list_serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
+
 #API DE MUNICIPIO
 class municipioViewSet(viewsets.ModelViewSet):
     serializer_class = municipioSerializer

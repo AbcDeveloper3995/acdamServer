@@ -20,6 +20,22 @@ class sectorSerializer(serializers.ModelSerializer):
         model = Sector
         fields = '__all__'
 
+#SERIALIZADORES DE LA API MODALIDAD
+class modalidadListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Modalidad
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre
+                }
+
+class modalidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Modalidad
+        fields = '__all__'
 
 #SERIALIZADORES DE LA API MUNICIPIO
 class municipioListarSerializer(serializers.ModelSerializer):
