@@ -80,7 +80,12 @@ CHOICE_TIPO_OBRA_COMERCIAL = (
 
 CHOICE_TIPO_PROFORMA = (
     (1, 'Estatal'),
-    (2, 'No estatal persona juridica'),
+    (2, 'No estatal persona juridica (Contrato MIPYME)'),
     (3, 'No estatal persona natural (Contrato Ejecucion Publica)'),
     (4, 'No estatal persona natural (Contrato Comprador Vendedor de Disco)'),
+)
+
+CHOICE_CATEGORIA_AUDIOVISUAL = (
+    ('1', 'Sala de Cine'),
+    ('2', 'Sala de Video'),
 )

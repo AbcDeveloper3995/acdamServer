@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.licenciamiento.models import *
+from apps.utils import formatoLargoProvincia
 
 #SERIALIZADORES DE LA API SECTOR
 class sectorListarSerializer(serializers.ModelSerializer):
@@ -125,56 +126,34 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaEstatal
         fields = '__all__'
 
-    # Funcion que retorna el nombre de la provincia en su formato largo
-    def formatoLargoProvincia(self, slug):
-        if slug == 'PR':
-            return 'Pinar del Rio'
-        elif slug == 'ART':
-            return 'Artemsia'
-        elif slug == 'MAY':
-            return 'Mayabeque'
-        elif slug == 'HAB':
-            return 'La Habanaaaaaa'
-        elif slug == 'MAT':
-            return 'Matanzas'
-        elif slug == 'VCL':
-            return 'Villa Clara'
-        elif slug == 'CFG':
-            return 'Cienfuegos'
-        elif slug == 'SS':
-            return 'Santi Spiritu'
-        elif slug == 'CAV':
-            return 'Ciego de Avila'
-        elif slug == 'TUN':
-            return 'Las Tunas'
-        elif slug == 'HOL':
-            return 'Holguin'
-        elif slug == 'GRM':
-            return 'Granma'
-        elif slug == 'STG':
-            return 'Santiago de Cuba'
-        elif slug == 'GTM':
-            return 'Guantanamo'
-        elif slug == 'IJV':
-            return 'Isla de la Juventud'
-
     def to_representation(self, instance):
         return {
             'titulo': instance.fk_proforma.titulo,
+            'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
             'numeroLicencia': instance.numeroLicencia,
             'codigo': instance.codigo,
+            'sucursal': instance.sucursal,
+            'titular': instance.titular,
+            'direccionBanco': instance.direccionBanco,
+            'banco': instance.banco,
+            'sucursal': instance.sucursal,
             'utilizador': instance.fk_utilizador.nombre,
             'direccion': instance.direccion,
-            'provincia': self.formatoLargoProvincia(instance.provincia),
+            'provincia': formatoLargoProvincia(instance.provincia),
             'municipio': instance.fk_municipio.nombre,
             'nit': instance.nit,
-            'fecha': instance.fecha,
             'subordinacion': instance.subordinacion,
             'nombreFirmanteContrato': instance.nombreFirmanteContrato,
             'cargoFirmanteContrato': instance.cargoFirmanteContrato,
             'codigoREEUP': instance.codigoREEUP,
-            'cuentaBancaria': instance.cuentaBancaria
+            'cuentaBancaria': instance.cuentaBancaria,
+            'resolucionUtilizador': instance.resolucionUtilizador,
+            'fechaResolucionUtilizador': instance.fechaResolucionUtilizador,
+            'emisionResolucionUtilizador': instance.emisionResolucionUtilizador,
+            'resolucionFirmante': instance.resolucionFirmante,
+            'fechaResolucionFirmante': instance.fechaResolucionFirmante,
+            'emitido': instance.emitido,
                 }
 
 #SERIALIZADORES DE PROFORMA
@@ -194,6 +173,7 @@ class proformaListarSerializer(serializers.ModelSerializer):
             'resolucion': instance.resolucion,
             'titulo': instance.titulo,
             'nombre': instance.nombre,
+            'tipo': instance.tipo,
                 }
 
 #SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA JURIDICA
@@ -205,7 +185,7 @@ class contratoLicenciaPersonaJuridicaListarSerializer(serializers.ModelSerialize
     def to_representation(self, instance):
         return {
             'id': instance.id,
-            'fk_utilizador': instance.fk_utilizador.nombre,
+            'fk_utilizador': instance.fk_utilizador.nombre
                 }
 
 class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
@@ -213,42 +193,10 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaPersonaJuridica
         fields = '__all__'
 
-    # Funcion que retorna el nombre de la provincia en su formato largo
-    def formatoLargoProvincia(self, slug):
-        if slug == 'PR':
-            return 'Pinar del Rio'
-        elif slug == 'ART':
-            return 'Artemsia'
-        elif slug == 'MAY':
-            return 'Mayabeque'
-        elif slug == 'HAB':
-            return 'La Habanaaaaaa'
-        elif slug == 'MAT':
-            return 'Matanzas'
-        elif slug == 'VCL':
-            return 'Villa Clara'
-        elif slug == 'CFG':
-            return 'Cienfuegos'
-        elif slug == 'SS':
-            return 'Santi Spiritu'
-        elif slug == 'CAV':
-            return 'Ciego de Avila'
-        elif slug == 'TUN':
-            return 'Las Tunas'
-        elif slug == 'HOL':
-            return 'Holguin'
-        elif slug == 'GRM':
-            return 'Granma'
-        elif slug == 'STG':
-            return 'Santiago de Cuba'
-        elif slug == 'GTM':
-            return 'Guantanamo'
-        elif slug == 'IJV':
-            return 'Isla de la Juventud'
-
     def to_representation(self, instance):
         return {
             'titulo': instance.fk_proforma.titulo,
+            'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
             'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
             'descripcion3eraParte': instance.fk_proforma.descripcion3raParte,
@@ -256,7 +204,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'codigo': instance.codigo,
             'utilizador': instance.fk_utilizador.nombre,
             'direccion': instance.direccion,
-            'provincia': self.formatoLargoProvincia(instance.provincia),
+            'provincia': formatoLargoProvincia(instance.provincia),
             'municipio': instance.fk_municipio.nombre,
             'nit': instance.nit,
             'fecha': instance.fecha,
@@ -267,14 +215,60 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'nombreFirmanteContrato': instance.nombreFirmanteContrato,
             'cargoFirmanteContrato': instance.cargoFirmanteContrato,
             'codigoOnei': instance.codigoOnei,
+            'cuentaCorriente': instance.cuentaCorriente,
+            'resolucionUtilizador': instance.resolucionUtilizador,
+            'fechaResolucionUtilizador': instance.fechaResolucionUtilizador,
+            'emisionResolucionUtilizador': instance.emisionResolucionUtilizador,
+            'resolucionFirmante': instance.resolucionFirmante,
+            'fechaResolucionFirmante': instance.fechaResolucionFirmante,
             'nombreComercial': instance.nombreComercial,
-            'provinciaComercial': instance.provinciaComercial,
+            'provinciaComercial': self.formatoLargoProvincia(instance.provincia),
             'fk_municipioComercial': instance.fk_municipio.nombre,
             'direccionComercial': instance.direccionComercial,
             'actividadComercial': instance.actividadComercial,
             'email': instance.email,
             'telefono': instance.telefono,
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,
-            'representacionObrasEscenicas': instance.representacionObrasEscenicas,
-            'comunicacionObrasAudioVisuales': instance.comunicacionObrasAudioVisuales,
-                }
+            'representacionObrasEscenicas': 'Si' if instance.representacionObrasEscenicas else 'No',
+            'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
+            }
+
+class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoLicenciaPersonaNatural
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'titulo': instance.fk_proforma.titulo,
+            'encabezado': instance.fk_proforma.encabezado,
+            'descripcion': instance.fk_proforma.descripcion,
+            'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
+            'descripcion3eraParte': instance.fk_proforma.descripcion3raParte,
+            'numeroLicencia': instance.numeroLicencia,
+            'codigo': instance.codigo,
+            'utilizador': instance.fk_utilizador.nombre,
+            'direccion': instance.direccion,
+            'provincia': formatoLargoProvincia(instance.provincia),
+            'municipio': instance.fk_municipio.nombre,
+            'nit': instance.nit,
+            'fecha': instance.fecha,
+            'banco': instance.banco,
+            'tarifa': instance.tarifa,
+            'sucursal': instance.sucursal,
+            'local': instance.local,
+            'ci': instance.ci,
+            'cuentaCorriente': instance.cuentaCorriente,
+            'codigoIdentificadorFiscal': instance.codigoIdentificadorFiscal,
+            'folio': instance.folio,
+            'nombreComercial': instance.nombreComercial,
+            'provinciaComercial': instance.provinciaComercial,
+            'fk_municipioComercial': instance.fk_municipio.nombre,
+            'direccionComercial': instance.direccionComercial,
+            'actividadComercial': 'Gestor de cobro y pago de derecho de autor' if instance.actividadComercial == '1' else 'Cobrador pagador del derecho de autor',
+            'email': instance.email,
+            'telefono': instance.telefono,
+            'ejecucionObrasComercial': instance.ejecucionObrasComercial,
+            'representacionObrasEscenicas': 'Si' if instance.representacionObrasEscenicas else 'No',
+            'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
+            }

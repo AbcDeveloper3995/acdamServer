@@ -13,3 +13,36 @@ def getElementosPaginados(paginaActual, model, serializador):
     data['totalPaginas'] = paginador.num_pages
     data['paginaActual'] = paginaActual
     return data
+
+# Funcion que retorna el nombre de la provincia en su formato largo
+def formatoLargoProvincia(slug):
+        if slug == 'PR':
+            return 'Pinar del Rio'
+        elif slug == 'ART':
+            return 'Artemisa'
+        elif slug == 'MAY':
+            return 'Mayabeque'
+        elif slug == 'HAB':
+            return 'La Habana'
+        elif slug == 'MAT':
+            return 'Matanzas'
+        elif slug == 'VCL':
+            return 'Villa Clara'
+        elif slug == 'CFG':
+            return 'Cienfuegos'
+        elif slug == 'SS':
+            return 'Santi Spiritu'
+        elif slug == 'CAV':
+            return 'Ciego de Avila'
+        elif slug == 'TUN':
+            return 'Las Tunas'
+        elif slug == 'HOL':
+            return 'Holguin'
+        elif slug == 'GRM':
+            return 'Granma'
+        elif slug == 'STG':
+            return 'Santiago de Cuba'
+        elif slug == 'GTM':
+            return 'Guantanamo'
+        elif slug == 'IJV':
+            return 'Isla de la Juventud'
