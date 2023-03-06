@@ -12,5 +12,6 @@ router.register(r'proforma', proformaViewSet, basename='proformaViewSet')
 router.register(r'contratoLicenciaEstatal', contratoLicenciaEstatalViewSet, basename='contratoLicenciaEstatalViewSet')
 router.register(r'contratoLicenciaPersonaJuridica', contratoLicenciaPersonaJuridicaViewSet, basename='contratoLicenciaPersonaJuridicaViewSet')
 router.register(r'contratoLicenciaPersonaNatural', contratoLicenciaPersonaNaturalViewSet, basename='contratoLicenciaPersonaNaturalViewSet')
+router.register(r'anexo71Musica', anexo71MusicaViewSet, basename='anexo71MusicaViewSet')
 
 urlpatterns = router.urls

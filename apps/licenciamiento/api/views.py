@@ -174,7 +174,7 @@ class utilizadorViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         aux, profomorma = [], []
         utilizador = self.get_object(self.kwargs['pk'])
-        serializer = self.serializer_class(utilizador)
+        serializer = self.list_serializer_class(utilizador)
         if utilizador.tipo == '1':
             idSector = utilizador.fk_sector.id
             derecho = utilizador.tipoDerecho
@@ -352,9 +352,9 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Contrato eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Contrato no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'], url_path='getlastContrato')
+    @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = ContratoLicenciaEstatal.objects.last()
+        contrato = list(ContratoLicenciaEstatal.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
         serializer = contratoLicenciaEstatalSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -457,9 +457,9 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Contrato eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Contrato no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'], url_path='getlastContrato')
+    @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = ContratoLicenciaPersonaJuridica.objects.last()
+        contrato = list(ContratoLicenciaPersonaJuridica.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
         serializer = contratoLicenciaPersonaJuridicaSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -511,8 +511,55 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Contrato eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Contrato no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'], url_path='getlastContrato')
+    @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = ContratoLicenciaPersonaNatural.objects.last()
+        contrato = list(ContratoLicenciaPersonaNatural.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
         serializer = contratoLicenciaPersonaNaturalSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#API DE ANEXO71MUSICA
+class anexo71MusicaViewSet(viewsets.ModelViewSet):
+    serializer_class = anexo71MusicaSerializer
+    list_serializer_class = anexo71MusicaListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Anexo musica creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        anexo71Musica = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(anexo71Musica)
+        return Response({'message': 'Detalles del anexo musica', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        anexo71Musica = self.get_queryset(pk)
+        if anexo71Musica:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Anexo musica modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Anexo musica no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        anexo71Musica = self.get_queryset(pk)
+        if anexo71Musica:
+            anexo71Musica.delete()
+            return Response({'message': 'Anexo musica eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Anexo musica no encontrado'}, status=status.HTTP_400_BAD_REQUEST)

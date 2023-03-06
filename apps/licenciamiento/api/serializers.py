@@ -144,6 +144,7 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'id': instance.id,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
@@ -288,3 +289,28 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'representacionObrasEscenicas': 'Si' if instance.representacionObrasEscenicas else 'No',
             'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
             }
+
+
+#SERIALIZADORES DE Anexo71Musica
+class anexo71MusicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo71Musica
+        fields = '__all__'
+
+class anexo71MusicaListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo71Musica
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'fk_contratoLicenciaPersonaJ': instance.fk_contratoLicenciaPersonaJ,
+            'locacion': instance.locacion,
+            'tarifa': instance.tarifa,
+            'periocidadPago': instance.periocidadPago,
+            'tipoMusica': instance.tipoMusica,
+            'modalidad': instance.modalidad,
+            'periocidadEntrega': instance.periocidadEntrega,
+                }
