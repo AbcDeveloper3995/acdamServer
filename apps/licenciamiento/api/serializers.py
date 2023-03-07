@@ -314,3 +314,100 @@ class anexo71MusicaListarSerializer(serializers.ModelSerializer):
             'modalidad': instance.modalidad,
             'periocidadEntrega': instance.periocidadEntrega,
                 }
+
+#SERIALIZADORES DE Anexo71Audiovisual
+class anexo71AudiovisualSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo71AudioVisual
+        fields = '__all__'
+
+class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo71AudioVisual
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'fk_contratoLicenciaPersonaJ': instance.fk_contratoLicenciaPersonaJ,
+            'locacion': instance.locacion,
+            'tarifa': instance.tarifa,
+            'periocidadPago': instance.periocidadPago,
+            'categoriaAudiovisual': instance.categoria,
+            'periocidadEntrega': instance.periocidadEntrega,
+                }
+
+#SERIALIZADORES DE Anexo72CIMEX
+class anexo72CimexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72Cimex
+        fields = '__all__'
+
+class anexo72CimexListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72Cimex
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'locacionModalidad': instance.locacionModalidad,
+            'tarifa': instance.tarifa,
+            'periocidadPago': instance.periocidadPago,
+            'cantidadPlazas': instance.cantidadPlazas,
+            'importe': instance.importe,
+            'periocidadEntrega': instance.periocidadEntrega,
+                }
+
+#SERIALIZADORES DE Anexo72Gaviota
+class anexo72GaviotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72Gaviota
+        fields = '__all__'
+
+class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72Gaviota
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'categoria': instance.categoria,
+            'numeroHabitacion': instance.numeroHabitacion,
+            'periodo': instance.periodo,
+            'periocidadPago': instance.periocidadPago,
+            'tarifaTemporadaAlta': instance.tarifaTemporadaAlta,
+            'tarifaTemporadaBaja': instance.tarifaTemporadaBaja,
+            'tarifaOcupacionInferior': instance.tarifaOcupacionInferior,
+            'importeTemporadaAlta': instance.importeTemporadaAlta,
+            'importeTemporadaBaja': instance.importeTemporadaBaja,
+            'importeTemporadaOcupacionInferior': instance.importeTemporadaOcupacionInferior,
+            'periocidadEntrega': instance.periocidadEntrega,
+                }
+
+#SERIALIZADORES DE Anexo72TRD
+class anexo72TrdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72TRD
+        fields = '__all__'
+
+class anexo72TrdListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anexo72TRD
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'locacion': instance.locacion,
+            'tarifa': instance.tarifa,
+            'periocidadPago': instance.periocidadPago,
+            'importe': instance.importe,
+            'modalidad': instance.modalidad,
+            'periocidadEntrega': instance.periocidadEntrega,
+                }

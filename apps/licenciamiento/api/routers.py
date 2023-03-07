@@ -13,5 +13,9 @@ router.register(r'contratoLicenciaEstatal', contratoLicenciaEstatalViewSet, base
 router.register(r'contratoLicenciaPersonaJuridica', contratoLicenciaPersonaJuridicaViewSet, basename='contratoLicenciaPersonaJuridicaViewSet')
 router.register(r'contratoLicenciaPersonaNatural', contratoLicenciaPersonaNaturalViewSet, basename='contratoLicenciaPersonaNaturalViewSet')
 router.register(r'anexo71Musica', anexo71MusicaViewSet, basename='anexo71MusicaViewSet')
+router.register(r'anexo71Audiovisual', anexo71AudiovisualViewSet, basename='anexo71AudiovisualViewSet')
+router.register(r'anexo72Cimex', anexo72CimexViewSet, basename='anexo72CimexViewSet')
+router.register(r'anexo72Gaviota', anexo72GaviotaViewSet, basename='anexo72GaviotaViewSet')
+router.register(r'anexo72Trd', anexo72TrdViewSet, basename='anexo72TrdViewSet')
 
 urlpatterns = router.urls

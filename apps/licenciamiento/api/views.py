@@ -563,3 +563,192 @@ class anexo71MusicaViewSet(viewsets.ModelViewSet):
             anexo71Musica.delete()
             return Response({'message': 'Anexo musica eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo musica no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#API DE ANEXO71MUSICA
+class anexo71AudiovisualViewSet(viewsets.ModelViewSet):
+    serializer_class = anexo71AudiovisualSerializer
+    list_serializer_class = anexo71AudiovisualListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Anexo audiovisual creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        anexo71Audiovisual = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(anexo71Audiovisual)
+        return Response({'message': 'Detalles del anexo audiovisual', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        anexo71Audiovisual = self.get_queryset(pk)
+        if anexo71Audiovisual:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Anexo audiovisual modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Anexo audiovisual no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        anexo71Audiovisual = self.get_queryset(pk)
+        if anexo71Audiovisual:
+            anexo71Audiovisual.delete()
+            return Response({'message': 'Anexo audiovisual eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Anexo audiovisual no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+#API DE ANEXO72CIMEX
+class anexo72CimexViewSet(viewsets.ModelViewSet):
+    serializer_class = anexo72CimexSerializer
+    list_serializer_class = anexo72CimexListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Anexo cimex creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        anexo72Cimex = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(anexo72Cimex)
+        return Response({'message': 'Detalles del anexo cimex', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        anexo71Audiovisual = self.get_queryset(pk)
+        if anexo71Audiovisual:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Anexo cimex modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Anexo cimex no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        anexo72Cimex = self.get_queryset(pk)
+        if anexo72Cimex:
+            anexo72Cimex.delete()
+            return Response({'message': 'Anexo cimex eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Anexo cimex no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+#API DE ANEXO72GAVIOTA
+class anexo72GaviotaViewSet(viewsets.ModelViewSet):
+    serializer_class = anexo72GaviotaSerializer
+    list_serializer_class = anexo72GaviotaListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Anexo gaviota creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        anexo72Gaviota = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(anexo72Gaviota)
+        return Response({'message': 'Detalles del anexo gaviota', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        anexo72Gaviota = self.get_queryset(pk)
+        if anexo72Gaviota:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Anexo gaviota modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Anexo gaviota no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        anexo72Gaviota = self.get_queryset(pk)
+        if anexo72Gaviota:
+            anexo72Gaviota.delete()
+            return Response({'message': 'Anexo gaviota eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Anexo gaviota no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+#API DE ANEXO72TRD
+class anexo72TrdViewSet(viewsets.ModelViewSet):
+    serializer_class = anexo72TrdSerializer
+    list_serializer_class = anexo72TrdListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Anexo TRD creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        anexo72Trd = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(anexo72Trd)
+        return Response({'message': 'Detalles del anexo TRD', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        anexo72Trd = self.get_queryset(pk)
+        if anexo72Trd:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Anexo TRD modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Anexo TRD no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        anexo72Trd = self.get_queryset(pk)
+        if anexo72Trd:
+            anexo72Trd.delete()
+            return Response({'message': 'Anexo TRD eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Anexo TRD no encontrado'}, status=status.HTTP_400_BAD_REQUEST)

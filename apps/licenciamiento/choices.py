@@ -89,3 +89,10 @@ CHOICE_CATEGORIA_AUDIOVISUAL = (
     ('1', 'Sala de Cine'),
     ('2', 'Sala de Video'),
 )
+
+CHOICE_CATEGORIA_HOTEL = (
+    ('2estrellas', '2 Estrellas'),
+    ('3estrellas', '3 Estrellas'),
+    ('4estrellas', '4 Estrellas'),
+    ('5estrellas', '5 Estrellas'),
+)
