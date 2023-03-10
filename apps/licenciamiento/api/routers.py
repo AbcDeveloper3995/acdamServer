@@ -17,5 +17,6 @@ router.register(r'anexo71Audiovisual', anexo71AudiovisualViewSet, basename='anex
 router.register(r'anexo72Cimex', anexo72CimexViewSet, basename='anexo72CimexViewSet')
 router.register(r'anexo72Gaviota', anexo72GaviotaViewSet, basename='anexo72GaviotaViewSet')
 router.register(r'anexo72Trd', anexo72TrdViewSet, basename='anexo72TrdViewSet')
+router.register(r'contratoMandato', contratoMandatoViewSet, basename='contratoMandatoViewSet')
 
 urlpatterns = router.urls

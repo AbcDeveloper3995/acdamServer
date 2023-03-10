@@ -410,6 +410,11 @@ class proformaViewSet(viewsets.ModelViewSet):
         data = getElementosPaginados(self.kwargs['pk'], Proforma, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'], url_path='getProformaRepresentante')
+    def getProformaRepresentante(self, request, *args, **kwargs):
+        proforma = get_object_or_404(self.list_serializer_class.Meta.model, tipo=5)
+        return Response({'idProformaRepresentante': proforma.pk}, status=status.HTTP_200_OK)
+
 #API DE CONTRATO  LICENCIA NO ESTATAL PERSONA JURIDICA
 class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
     serializer_class = contratoLicenciaPersonaJuridicaSerializer
@@ -752,3 +757,58 @@ class anexo72TrdViewSet(viewsets.ModelViewSet):
             anexo72Trd.delete()
             return Response({'message': 'Anexo TRD eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo TRD no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#API DE CONTRATO  MANDATO
+class contratoMandatoViewSet(viewsets.ModelViewSet):
+    serializer_class = contratoMandatoSerializer
+    list_serializer_class = contratoMandatoListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Contrato creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        contrato = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(contrato)
+        return Response({'message': 'Detalles del Contrato', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        contrato = self.get_queryset(pk)
+        if contrato:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Contrato modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Contrato no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        contrato = self.get_queryset(pk)
+        if contrato:
+            contrato.delete()
+            return Response({'message': 'Contrato eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Contrato no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='getlastContrato')
+    def getlastContrato(self, request, *args, **kwargs):
+        contrato = list(ContratoMandatoRepresentante.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
+        serializer = contratoMandatoListarSerializer(contrato)
+        return Response(serializer.data, status=status.HTTP_200_OK)

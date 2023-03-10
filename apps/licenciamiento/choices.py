@@ -83,6 +83,7 @@ CHOICE_TIPO_PROFORMA = (
     (2, 'No estatal persona juridica (Contrato MIPYME)'),
     (3, 'No estatal persona natural (Contrato Ejecucion Publica)'),
     (4, 'No estatal persona natural (Contrato Comprador Vendedor de Disco)'),
+    (5, 'Representante'),
 )
 
 CHOICE_CATEGORIA_AUDIOVISUAL = (

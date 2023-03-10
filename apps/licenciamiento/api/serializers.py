@@ -106,12 +106,12 @@ class representanteListarSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
-            'id': instance.id,
+            'id': instance.pk,
             'ci': instance.ci,
             'nombre': instance.nombre,
             'apellidos': instance.apellidos,
-            'provincia': instance.provincia,
-            'fk_municipio': self.recorridoMTM(instance.fk_municipio),
+            'provincia': formatoLargoProvincia(instance.provincia),
+            'fk_municipiosAtendidos': self.recorridoMTM(instance.fk_municipiosAtendidos),
             'fk_utilizador': self.recorridoMTM(instance.fk_utilizador),
             'fk_sector': self.recorridoMTM(instance.fk_sector),
             'direccion': instance.direccion,
@@ -334,7 +334,7 @@ class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
             'periocidadPago': instance.periocidadPago,
-            'categoriaAudiovisual': instance.categoria,
+            'categoriaAudiovisual': instance.categoriaAudiovisual,
             'periocidadEntrega': instance.periocidadEntrega,
                 }
 
@@ -410,4 +410,37 @@ class anexo72TrdListarSerializer(serializers.ModelSerializer):
             'importe': instance.importe,
             'modalidad': instance.modalidad,
             'periocidadEntrega': instance.periocidadEntrega,
+                }
+
+
+#SERIALIZADORES DE CONTRATO MANDATO
+class contratoMandatoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoMandatoRepresentante
+        fields = '__all__'
+
+class contratoMandatoListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoMandatoRepresentante
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_representante': instance.fk_representante.nombre,
+            'ci': instance.fk_representante.ci,
+            'direccion': instance.fk_representante.direccion,
+            'municipioResidente': instance.fk_representante.fk_municipioResidente.nombre,
+            'provincia': formatoLargoProvincia(instance.fk_representante.provincia),
+            'fechaCreacion': instance.fechaCreacion,
+            'tipoActividad': 'Gestor de cobro y pago de derecho de autor' if instance.tipoActividad == '1' else 'Cobrador pagador del derecho de autor',
+            'numeroContrato': instance.numeroContrato,
+            'numeroLicencia': instance.numeroLicencia,
+            'fechaLicencia': instance.fechaLicencia,
+            'fechaInscripcion': instance.fechaInscripcion,
+            'remuneracion': instance.remuneracion,
+            'titulo': instance.fk_proforma.titulo,
+            'encabezado': instance.fk_proforma.encabezado,
+            'descripcion': instance.fk_proforma.descripcion,
+            'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
                 }

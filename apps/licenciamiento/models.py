@@ -122,7 +122,8 @@ class Utilizador(models.Model):
 
 
 class Representante(models.Model):
-    fk_municipio = models.ManyToManyField(Municipio, verbose_name='Municipio')
+    fk_municipiosAtendidos = models.ManyToManyField(Municipio, verbose_name='Municipios que atiende')
+    fk_municipioResidente = models.ForeignKey(Municipio, verbose_name='Municipio donde reside', related_name="municipioResidente", blank=True, null=True,on_delete=models.CASCADE)
     fk_utilizador = models.ManyToManyField(Utilizador, verbose_name='Utilizador')
     fk_sector = models.ManyToManyField(Sector, verbose_name='Sector que atiende')
     fk_usuario = models.ForeignKey(Usuario, verbose_name='Atendido por', blank=True, null=True, on_delete=models.CASCADE)
@@ -146,12 +147,18 @@ class Representante(models.Model):
         return f'Representante: {self.nombre} {self.apellidos}.'
 
 class ContratoMandatoRepresentante(models.Model):
+    fk_usuario = models.ForeignKey(Usuario, verbose_name='Creado por', blank=True, null=True, on_delete=models.CASCADE)
+    fk_proforma = models.ForeignKey('Proforma', verbose_name='Proforma', blank=True, null=True, on_delete=models.CASCADE)
     fk_representante = models.ForeignKey(Representante, verbose_name='Representante', related_name="representanteContrato", blank=True, null=True, on_delete=models.CASCADE)
     fk_utilizador = models.ForeignKey(Utilizador, verbose_name='Utilizador', blank=True, null=True, on_delete=models.CASCADE)
     fk_representantesAsociados = models.ManyToManyField('Representante', verbose_name='Representantes Asociados', blank=True, null=True)
-    fecha = models.DateField(verbose_name='Fecha', auto_now=True)
+    fechaCreacion = models.DateField(verbose_name='Fecha creacion del contrato', auto_now=True)
+    fechaLicencia = models.DateField(verbose_name='Fecha de Licencia', blank=True, null=True)
+    fechaInscripcion = models.DateField(verbose_name='Fecha de Inscripcion', blank=True, null=True)
     tipoActividad = models.CharField(verbose_name='Tipo de actividad', choices=CHOICE_ACTIVIDAD, max_length=50, blank=False, null=False)
     numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', blank=False, null=False)
+    numeroContrato = models.IntegerField(verbose_name='Numero de Contrato', blank=True, null=True)
+    remuneracion = models.IntegerField(verbose_name='Remuneracion', blank=True, null=True)
 
     class Meta:
         db_table = 'ContratoMandatoRepresentante'
@@ -304,7 +311,7 @@ class Anexo71Musica(Anexo71Base):
         return f'Anexo 71 musica vinculado al contrato {self.fk_contratoLicenciaEstatal.numeroLicencia}.'
 
 class Anexo71AudioVisual(Anexo71Base):
-    categoria = models.CharField(verbose_name='Categoria', choices=CHOICE_CATEGORIA_AUDIOVISUAL, max_length=150, blank=False, null=False)
+    categoriaAudiovisual = models.CharField(verbose_name='Categoria', choices=CHOICE_CATEGORIA_AUDIOVISUAL, max_length=150, blank=False, null=False)
     periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=False, null=False)
 
     class Meta:
