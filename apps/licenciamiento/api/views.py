@@ -319,7 +319,7 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        serializer = self.serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -429,7 +429,7 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        serializer = self.serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -471,7 +471,6 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
 #API DE CONTRATO  LICENCIA NO ESTATAL PERSONA NATURAL
 class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
     serializer_class = contratoLicenciaPersonaNaturalSerializer
-    list_serializer_class = contratoLicenciaPersonaNaturalSerializer
 
     def get_queryset(self, pk=None):
         if pk is None:
@@ -479,14 +478,13 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
 
     def get_object(self, pk):
-        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+        return get_object_or_404(self.serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        serializer = self.serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -568,7 +566,6 @@ class anexo71MusicaViewSet(viewsets.ModelViewSet):
             anexo71Musica.delete()
             return Response({'message': 'Anexo musica eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo musica no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 #API DE ANEXO71MUSICA
 class anexo71AudiovisualViewSet(viewsets.ModelViewSet):

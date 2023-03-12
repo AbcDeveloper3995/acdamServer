@@ -145,6 +145,7 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.id,
+            'fechaCreacionContrato': instance.fechaCreacionContrato,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
@@ -212,6 +213,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'fechaCreacionContrato': instance.fechaCreacionContrato,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
@@ -224,7 +226,6 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'provincia': formatoLargoProvincia(instance.provincia),
             'municipio': instance.fk_municipio.nombre,
             'nit': instance.nit,
-            'fecha': instance.fecha,
             'tipo': instance.tipo,
             'banco': instance.banco,
             'tarifa': instance.tarifa,
@@ -239,7 +240,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'resolucionFirmante': instance.resolucionFirmante,
             'fechaResolucionFirmante': instance.fechaResolucionFirmante,
             'nombreComercial': instance.nombreComercial,
-            'provinciaComercial': self.formatoLargoProvincia(instance.provincia),
+            'provinciaComercial': formatoLargoProvincia(instance.provincia),
             'fk_municipioComercial': instance.fk_municipio.nombre,
             'direccionComercial': instance.direccionComercial,
             'actividadComercial': instance.actividadComercial,
@@ -250,6 +251,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
             }
 
+#SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA NATURAL
 class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaPersonaNatural
@@ -257,6 +259,7 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'fechaCreacionContrato': instance.fechaCreacionContrato,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
@@ -269,7 +272,6 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'provincia': formatoLargoProvincia(instance.provincia),
             'municipio': instance.fk_municipio.nombre,
             'nit': instance.nit,
-            'fecha': instance.fecha,
             'banco': instance.banco,
             'tarifa': instance.tarifa,
             'sucursal': instance.sucursal,
@@ -282,7 +284,7 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'provinciaComercial': instance.provinciaComercial,
             'fk_municipioComercial': instance.fk_municipio.nombre,
             'direccionComercial': instance.direccionComercial,
-            'actividadComercial': 'Gestor de cobro y pago de derecho de autor' if instance.actividadComercial == '1' else 'Cobrador pagador del derecho de autor',
+            'actividadComercial': instance.actividadComercial,
             'email': instance.email,
             'telefono': instance.telefono,
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,
@@ -427,7 +429,7 @@ class contratoMandatoListarSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_representante': instance.fk_representante.nombre,
+            'fk_representante': instance.fk_representante.getNombreCompleto(),
             'ci': instance.fk_representante.ci,
             'direccion': instance.fk_representante.direccion,
             'municipioResidente': instance.fk_representante.fk_municipioResidente.nombre,

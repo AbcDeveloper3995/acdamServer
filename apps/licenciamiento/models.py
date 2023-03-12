@@ -146,6 +146,9 @@ class Representante(models.Model):
     def __str__(self):
         return f'Representante: {self.nombre} {self.apellidos}.'
 
+    def getNombreCompleto(self):
+        return f'{self.nombre} {self.apellidos}'
+
 class ContratoMandatoRepresentante(models.Model):
     fk_usuario = models.ForeignKey(Usuario, verbose_name='Creado por', blank=True, null=True, on_delete=models.CASCADE)
     fk_proforma = models.ForeignKey('Proforma', verbose_name='Proforma', blank=True, null=True, on_delete=models.CASCADE)
