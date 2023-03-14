@@ -21,12 +21,11 @@ class ContratoLicenciaBase(models.Model):
     direccionBanco = models.CharField(verbose_name='Direccion del Banco', max_length=250, blank=True, null=True)
     provincia = models.CharField(verbose_name='Provincia', max_length=50, choices=CHOICE_PROVINCIA, blank=False, null=False)
     fechaCreacionContrato = models.DateField(verbose_name='Fecha en que se crea el contrato', auto_now=True)
-    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', blank=False, null=False)
-    nit = models.BigIntegerField(verbose_name='NIT', blank=False, null=False)
-    codigo = models.IntegerField(verbose_name='Codigo', blank=False, null=False)
+    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
+    nit = models.BigIntegerField(verbose_name='NIT', unique=True, blank=False, null=False)
+    codigo = models.IntegerField(verbose_name='Codigo', unique=True, blank=False, null=False)
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=True)
     estado = models.CharField(verbose_name='Estado', max_length=50, choices=CHOICE_ESTADO, blank=True, null=True)
-    fecha = models.DateField(verbose_name='Fecha', auto_now=True)
     tiempoVigencia = models.IntegerField(verbose_name='Tiempo de vigencia', blank=True, null=True)
     fechaVecimiento = models.DateField(verbose_name='Fecha de vencimiento')
 
@@ -130,11 +129,11 @@ class Representante(models.Model):
     provincia = models.CharField(verbose_name='Provincia', max_length=50, choices=CHOICE_PROVINCIA, blank=False, null=False)
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
     apellidos = models.CharField(verbose_name='Apellidos', max_length=150, blank=False, null=False)
-    ci = models.BigIntegerField(verbose_name='CI', blank=False, null=False)
+    ci = models.BigIntegerField(verbose_name='CI', unique=True, blank=False, null=False)
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=False, null=False)
     nivelEscolaridad = models.CharField(verbose_name='Nivel de escolaridad', choices=CHOICE_NIVEL_ESCOLARIDAD, max_length=150, blank=False, null=False)
-    codigo = models.IntegerField(verbose_name='Codigo',  blank=False, null=False)
-    email = models.CharField(verbose_name='Correo', max_length=50, blank=False, null=False)
+    codigo = models.IntegerField(verbose_name='Codigo', unique=True,  blank=False, null=False)
+    email = models.CharField(verbose_name='Correo', max_length=50, blank=True, null=True)
     esActivo = models.BooleanField(default=True)
 
     class Meta:
@@ -159,8 +158,8 @@ class ContratoMandatoRepresentante(models.Model):
     fechaLicencia = models.DateField(verbose_name='Fecha de Licencia', blank=True, null=True)
     fechaInscripcion = models.DateField(verbose_name='Fecha de Inscripcion', blank=True, null=True)
     tipoActividad = models.CharField(verbose_name='Tipo de actividad', choices=CHOICE_ACTIVIDAD, max_length=50, blank=False, null=False)
-    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', blank=False, null=False)
-    numeroContrato = models.IntegerField(verbose_name='Numero de Contrato', blank=True, null=True)
+    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
+    numeroContrato = models.IntegerField(verbose_name='Numero de Contrato', unique=True, blank=True, null=True)
     remuneracion = models.IntegerField(verbose_name='Remuneracion', blank=True, null=True)
 
     class Meta:
@@ -181,8 +180,8 @@ class ContratoLicenciaEstatal(ContratoLicenciaBase):
     subordinacion = models.CharField(verbose_name='Subordinacion', max_length=50, blank=False, null=False)
     nombreFirmanteContrato = models.CharField(verbose_name='Nombre de quien firma el contrato', max_length=150, blank=False, null=False)
     cargoFirmanteContrato = models.CharField(verbose_name='Cargo de quien firma el contrato', max_length=150, blank=False, null=False)
-    codigoREEUP = models.CharField(verbose_name='Codigo REEUP',  max_length=150, blank=False, null=False)
-    cuentaBancaria = models.BigIntegerField(verbose_name='Cuenta Bancaria',  blank=False, null=False)
+    codigoREEUP = models.CharField(verbose_name='Codigo REEUP',  max_length=150, unique=True, blank=False, null=False)
+    cuentaBancaria = models.BigIntegerField(verbose_name='Cuenta Bancaria',  unique=True, blank=False, null=False)
     emitido = models.CharField(verbose_name='Emitido por', max_length=250, blank=True, null=True)
 
     class Meta:
@@ -194,10 +193,10 @@ class ContratoLicenciaEstatal(ContratoLicenciaBase):
         return f'Contrato licencia estatal numero {self.numeroLicencia} perteneciente a: {self.fk_utilizador.nombre}.'
 
 class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
-    ci = models.BigIntegerField(verbose_name='CI', blank=False, null=False)
-    codigoIdentificadorFiscal = models.IntegerField(verbose_name='Codigo Identificacion fiscal RC50', blank=False, null=False)
-    folio = models.IntegerField(verbose_name='Folio', blank=False, null=False)
-    cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', blank=False, null=False)
+    ci = models.BigIntegerField(verbose_name='CI', unique=True, blank=False, null=False)
+    codigoIdentificadorFiscal = models.IntegerField(verbose_name='Codigo Identificacion fiscal RC50', unique=True, blank=False, null=False)
+    folio = models.IntegerField(verbose_name='Folio', unique=True, blank=False, null=False)
+    cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', unique=True, blank=False, null=False)
     tarifa = models.IntegerField(verbose_name='Tarifa', blank=False, null=False)
     local = models.CharField(verbose_name='Local', max_length=150, blank=True, null=True)
     nombreComercial = models.CharField(verbose_name='Nombre Comercial', max_length=150, blank=True, null=True)
@@ -205,7 +204,7 @@ class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
     provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
     actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50,blank=True, null=True)
     email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
-    telefono = models.IntegerField(verbose_name='Telefono', blank=True, null=True)
+    telefono = models.IntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
     ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial',
                                                choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
     representacionObrasEscenicas = models.BooleanField(default=False)
@@ -228,10 +227,10 @@ class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
     resolucionFirmante = models.CharField(verbose_name='Resolucion del firmante', max_length=200, blank=True, null=True)
     fechaResolucionFirmante = models.DateField(verbose_name='Fecha resolucion firmante', blank=True, null=True)
     fk_municipioComercial = models.ForeignKey(Municipio, verbose_name='Municipio', related_name="municipioComercial", blank=True, null=True, on_delete=models.CASCADE)
-    codigoOnei = models.CharField(verbose_name='Codigo Onei', max_length=50, blank=False, null=False)
+    codigoOnei = models.CharField(verbose_name='Codigo Onei', max_length=50, unique=True, blank=False, null=False)
     tipo = models.CharField(verbose_name='Tipo', max_length=150, choices=CHOICE_TIPO_PERSONA_JURIDICA, blank=True, null=True)
     tarifa = models.IntegerField(verbose_name='Tarifa', blank=True, null=True)
-    cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', blank=False, null=False)
+    cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', unique=True, blank=False, null=False)
     nombreFirmanteContrato = models.CharField(verbose_name='Nombre de quien firma el contrato', max_length=150, blank=False, null=False)
     cargoFirmanteContrato = models.CharField(verbose_name='Cargo de quien firma el contrato', max_length=150, blank=False, null=False)
     emitido = models.CharField(verbose_name='Emitido por', max_length=250, blank=True, null=True)
@@ -240,7 +239,7 @@ class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
     provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
     actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50, blank=True, null=True)
     email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
-    telefono = models.IntegerField(verbose_name='Telefono', blank=True, null=True)
+    telefono = models.IntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
     ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial', choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
     representacionObrasEscenicas = models.BooleanField(default=False)
     comunicacionObrasAudioVisuales = models.BooleanField(default=False)

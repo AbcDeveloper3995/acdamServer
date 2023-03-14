@@ -175,9 +175,9 @@ class utilizadorViewSet(viewsets.ModelViewSet):
         aux, profomorma = [], []
         utilizador = self.get_object(self.kwargs['pk'])
         serializer = self.list_serializer_class(utilizador)
+        idSector = utilizador.fk_sector.id
+        derecho = utilizador.tipoDerecho
         if utilizador.tipo == '1':
-            idSector = utilizador.fk_sector.id
-            derecho = utilizador.tipoDerecho
             proformas = ClasificadorProforma.objects.filter(fk_sector__id=idSector, tipoDerecho=derecho)
             for i in proformas:
                 aux.append(i.fk_proforma)
@@ -186,7 +186,7 @@ class utilizadorViewSet(viewsets.ModelViewSet):
             for i in proformas:
                 aux.append(i.fk_proforma)
         serializerProforma = proformaSerializer(aux, many=True)
-        return Response({'message': 'Detalles del utilizador', 'data': serializer.data, 'proformas':serializerProforma.data}, status=status.HTTP_200_OK)
+        return Response({'idSector': idSector, 'tipo': utilizador.tipo, 'data': serializer.data, 'proformas':serializerProforma.data}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
         if self.get_queryset(pk):

@@ -5,6 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.usuario.models import *
 
 #SERIALIZADORES DE LA API CARGO
+from apps.validators import validarSoloLetras
+
+
 class cargoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
@@ -19,6 +22,10 @@ class cargoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
         fields = '__all__'
+
+    def validate_nombre(self, value):
+        validarSoloLetras(value)
+        return value
 
 class customTokenObtainPairSerializer(TokenObtainPairSerializer):
     pass

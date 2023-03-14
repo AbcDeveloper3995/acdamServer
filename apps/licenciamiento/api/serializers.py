@@ -2,8 +2,10 @@ from rest_framework import serializers
 
 from apps.licenciamiento.models import *
 from apps.utils import formatoLargoProvincia
+from apps.validators import validarSoloLetras, validarCarnetIdentidad
 
-#SERIALIZADORES DE LA API SECTOR
+
+# SERIALIZADORES DE LA API SECTOR
 class sectorListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sector
@@ -19,6 +21,10 @@ class sectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sector
         fields = '__all__'
+
+    def validate_nombre(self, value):
+        validarSoloLetras(value)
+        return value
 
 #SERIALIZADORES DE LA API MODALIDAD
 class modalidadListarSerializer(serializers.ModelSerializer):
@@ -36,6 +42,10 @@ class modalidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modalidad
         fields = '__all__'
+
+    def validate_nombre(self, value):
+        validarSoloLetras(value)
+        return value
 
 #SERIALIZADORES DE LA API MUNICIPIO
 class municipioListarSerializer(serializers.ModelSerializer):
@@ -74,6 +84,20 @@ class utilizadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilizador
         fields = '__all__'
+
+    def validate_nombre(self, value):
+        validarSoloLetras(value)
+        return value
+
+    def validate_fk_sector(self, value):
+        if value == '' or value == None:
+            raise serializers.ValidationError(['El campo sector es requerido.'])
+        return value
+
+    def validate_tipoDerecho(self, value):
+        if value == '' or value == None:
+            raise serializers.ValidationError(['El campo derecho es requerido, no puede estar en blanco.'])
+        return value
 
 #SERIALIZADORES DE LA API REPRESENTANTE
 class representanteListarSerializer(serializers.ModelSerializer):
@@ -124,6 +148,18 @@ class representanteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Representante
         fields = '__all__'
+
+    def validate_nombre(self, value):
+        validarSoloLetras(value)
+        return value
+
+    def validate_ci(self, value):
+        validarCarnetIdentidad(value)
+        return value
+
+    def validate_apellidos(self, value):
+        validarSoloLetras(value)
+        return value
 
 #SERIALIZADORES DE CONTRATO LICENCIA ESTATAL
 class contratoLicEstatalListarSerializer(serializers.ModelSerializer):
