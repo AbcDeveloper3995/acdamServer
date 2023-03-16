@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.licenciamiento.models import *
 from apps.utils import formatoLargoProvincia
-from apps.validators import validarSoloLetras, validarCarnetIdentidad
+from apps.validators import *
 
 
 # SERIALIZADORES DE LA API SECTOR
@@ -86,17 +86,18 @@ class utilizadorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nombre(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
     def validate_fk_sector(self, value):
-        if value == '' or value == None:
-            raise serializers.ValidationError(['El campo sector es requerido.'])
+        sms = 'El campo Sector es requerido.'
+        validarNoNuloOvacio(value, sms)
         return value
 
     def validate_tipoDerecho(self, value):
-        if value == '' or value == None:
-            raise serializers.ValidationError(['El campo derecho es requerido, no puede estar en blanco.'])
+        sms = 'El campo Tipo derecho es requerido.'
+        validarNoNuloOvacio(value, sms)
         return value
 
 #SERIALIZADORES DE LA API REPRESENTANTE
@@ -141,7 +142,8 @@ class representanteListarSerializer(serializers.ModelSerializer):
             'direccion': instance.direccion,
             'nivelEscolaridad': self.getDescripcionNivelEscolar(instance),
             'codigo': instance.codigo,
-            'email': instance.email
+            'email': instance.email,
+            'tieneContrato': instance.verificarSiTieneContrato()
                 }
 
 class representanteSerializer(serializers.ModelSerializer):
@@ -150,15 +152,18 @@ class representanteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nombre(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
     def validate_ci(self, value):
-        validarCarnetIdentidad(value)
+        sms = 'El campo Carnet identidad de tener 11 digitos.'
+        validarLongitud(value,11,sms)
         return value
 
     def validate_apellidos(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Apellidos solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
 #SERIALIZADORES DE CONTRATO LICENCIA ESTATAL
@@ -177,6 +182,120 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaEstatal
         fields = '__all__'
+
+    def validate_resolucionUtilizador(self, value):
+        sms = 'El campo Resolucion utilizador es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Resolucion utilizador solo acepta valores alfanumericos.'
+        validarSoloNumerosYletras(value, sms)
+        return value
+
+    def validate_fechaResolucionUtilizador(self, value):
+        sms = 'El campo Fecha de resolucion utilizador no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
+    def validate_emisionResolucionUtilizador(self, value):
+        sms = 'El campo Resolucion emitida por es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Resolucion emitida por solo acepta valores alfanumericos.'
+        validarSoloNumerosYletras(value, sms)
+        return value
+
+    def validate_subordinacion(self, value):
+        sms = 'El campo Subordinacion solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_fk_municipio(self, value):
+        sms = 'El campo Municipio es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_direccion(self, value):
+        sms = 'El campo Direccion es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_codigoREEUP(self, value):
+        sms = 'El campo Codigo REEUP solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        sms = 'El campo Codigo REEUP debe tener 5 digitos .'
+        validarLongitud(value, 5, sms)
+        return value
+
+    def validate_nit(self, value):
+        sms = 'El campo NIT debe tener 11 digitos .'
+        validarLongitud(value, 11, sms)
+        return value
+
+    def validate_cuentaBancaria(self, value):
+        sms = 'El campo Cuenta bancaria debe tener 16 digitos .'
+        validarLongitud(value, 16, sms)
+        return value
+
+    def validate_titular(self, value):
+        sms = 'El campo Titular es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Titular solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_banco(self, value):
+        sms = 'El campo Banco es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Banco solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_sucursal(self, value):
+        sms = 'El campo Sucursal es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Sucursal solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        return value
+
+    def validate_nombreFirmanteContrato(self, value):
+        sms = 'El campo Nombre del firmante solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_cargoFirmanteContrato(self, value):
+        sms = 'El campo Cargo del firmante solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_resolucionFirmante(self, value):
+        sms = 'El campo Resolucion del firmante solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        sms = 'El campo Resolucion del firmante es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_fechaResolucionFirmante(self, value):
+        sms = 'El campo Fecha de resolucion firmante no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
+    def validate_emitido(self, value):
+        sms = 'El campo Emitido es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Emitido por solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_estado(self, value):
+        sms = 'El campo Estado es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tiempoVigencia(self, value):
+        sms = 'El campo Tiempo de vigencia es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+
+
 
     def to_representation(self, instance):
         return {
@@ -456,6 +575,27 @@ class contratoMandatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoMandatoRepresentante
         fields = '__all__'
+
+    def validate_remuneracion(self, value):
+        sms = 'El campo remuneracion es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_numeroContrato(self, value):
+        sms = 'El campo numero de contrato es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_fechaInscripcion(self, value):
+        sms = 'El campo fecha de inscripcion no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
+    def validate_fechaLicencia(self, value):
+        sms = 'El campo fecha de licencia no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
 
 class contratoMandatoListarSerializer(serializers.ModelSerializer):
     class Meta:

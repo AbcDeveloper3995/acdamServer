@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -323,6 +325,9 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
+        date = datetime.datetime.today().date()
+        year = date.year+int(request.data['tiempoVigencia'])
+        request.data['fechaVencimiento'] = datetime.datetime(year,date.month,date.day).date()
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -354,7 +359,10 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = list(ContratoLicenciaEstatal.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
+        query = ContratoLicenciaEstatal.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        if not query.exists():
+            return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
+        contrato = list(query).pop()
         serializer = contratoLicenciaEstatalSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

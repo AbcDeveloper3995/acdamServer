@@ -1,37 +1,49 @@
+import datetime
 import re
 
 from rest_framework import serializers
 
+# FUNCION PARA VALIDAR QUE EL CAMPO NO SEA NULO O VACIO
+def validarNoNuloOvacio(value, sms):
+    if value == '' or value == None:
+        raise serializers.ValidationError([sms])
+    return value
+
 # FUNCION PARA VALIDAR SOLO LETRAS
-def validarSoloLetras(value):
+def validarSoloLetras(value, sms):
     p = re.compile(u"[a-zA-ZñÑáéíóú ]+$")
     m = p.match(value)
     if not m:
-        raise serializers.ValidationError(['El campo nombre solo admite letras.'])
+        raise serializers.ValidationError([sms])
     return value
 
 # FUNCION PARA VALIDAR SOLO NUMEROS
-def validarSoloNumeros(value):
+def validarSoloNumeros(value, sms):
     p = re.compile(u"[0-9]+$")
     m = p.match(value)
     if not m:
-        raise serializers.ValidationError(['El campo tal solo admite números.'])
+        raise serializers.ValidationError([sms])
     return value
 
 # FUNCION PARA VALIDAR SOLO NUMEROS Y LETRAS
-def validarSoloNumerosYletras(value):
+def validarSoloNumerosYletras(value, sms):
     p = re.compile(u"[a-zA-ZñÑáéíóú0-9 ]+$")
     m = p.match(value)
     if not m:
-        raise serializers.ValidationError(['El campo tal solo admite números y letras.'])
+        raise serializers.ValidationError([sms])
     return value
 
 # FUNCION PARA VALIDAR SEL CI
-def validarCarnetIdentidad(value):
+def validarLongitud(value, longitud, sms):
     p = re.compile(u"\d+$")
     m = p.match(str(value))
-    if not m:
-        raise serializers.ValidationError(['El campo carnet identidad solo admite números.'])
-    if str(value).__len__() != 11:
-        raise serializers.ValidationError(['El carné de identidad debe contener 11 dígitos.'])
+    if str(value).__len__() != longitud:
+        raise serializers.ValidationError([sms])
+    return value
+
+# FUNCION PARA VALIDAR QUE LA FECHA SEA MENOR QUE LA ACTUAL
+def validarFechaMenorAfechaActual(value, sms):
+    fechaActual = datetime.datetime.today().date()
+    if value > fechaActual:
+        raise serializers.ValidationError([sms])
     return value
