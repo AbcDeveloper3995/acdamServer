@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.paginator import Paginator
 
 #FUNCION QUE RETORNA UN DICCIONARIO CON LOS DATOS PAGINADOS, EL TOTAL DE PAGINAS Y LA PAGINA ACTUAL
@@ -46,3 +48,9 @@ def formatoLargoProvincia(slug):
             return 'Guantanamo'
         elif slug == 'IJV':
             return 'Isla de la Juventud'
+
+#FUNCION PARA OBTENER LA FECHA DE VENCIMIENTO DE UN CONTRATO
+def getFechaExpiracion(anos):
+    date = datetime.datetime.today().date()
+    year = date.year + anos
+    return datetime.datetime(year, date.month, date.day).date()

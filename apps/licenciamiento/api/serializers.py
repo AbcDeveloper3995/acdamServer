@@ -23,7 +23,8 @@ class sectorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nombre(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
 #SERIALIZADORES DE LA API MODALIDAD
@@ -44,7 +45,8 @@ class modalidadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nombre(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
 #SERIALIZADORES DE LA API MUNICIPIO
@@ -159,6 +161,8 @@ class representanteSerializer(serializers.ModelSerializer):
     def validate_ci(self, value):
         sms = 'El campo Carnet identidad de tener 11 digitos.'
         validarLongitud(value,11,sms)
+        sms = 'El campo Carnet identidad debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
         return value
 
     def validate_apellidos(self, value):
@@ -227,11 +231,15 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
     def validate_nit(self, value):
         sms = 'El campo NIT debe tener 11 digitos .'
         validarLongitud(value, 11, sms)
+        sms = 'El campo NIT debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
         return value
 
     def validate_cuentaBancaria(self, value):
         sms = 'El campo Cuenta bancaria debe tener 16 digitos .'
         validarLongitud(value, 16, sms)
+        sms = 'El campo Cuenta bancaria debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
         return value
 
     def validate_titular(self, value):
@@ -293,9 +301,6 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         sms = 'El campo Tiempo de vigencia es requerido.'
         validarNoNuloOvacio(value, sms)
         return value
-
-
-
 
     def to_representation(self, instance):
         return {
@@ -366,6 +371,118 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaPersonaJuridica
         fields = '__all__'
 
+    def validate_tipo(self, value):
+        sms = 'El campo Tipo es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_resolucionUtilizador(self, value):
+        sms = 'El campo Creada mediante es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Creada mediante por solo acepta valores alfanumericos.'
+        validarSoloNumerosYletras(value, sms)
+        return value
+
+    def validate_fechaResolucionUtilizador(self, value):
+        sms = 'El campo Fecha correspondiente a la creacion no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
+    def validate_direccion(self, value):
+        sms = 'El campo Direccion es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_codigoOnei(self, value):
+        sms = 'El campo Codigo ONEI solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        sms = 'El campo Codigo ONEI debe tener 5 digitos.'
+        validarLongitud(value, 5, sms)
+        return value
+
+    def validate_nit(self, value):
+        sms = 'El campo NIT debe tener 11 digitos.'
+        validarLongitud(value, 11, sms)
+        sms = 'El campo NIT debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
+        return value
+
+    def validate_cuentaCorriente(self, value):
+        sms = 'El campo Cuenta corriente debe tener 16 digitos.'
+        validarLongitud(value, 16, sms)
+        sms = 'El campo Cuenta corriente debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
+        return value
+
+    def validate_nombreFirmanteContrato(self, value):
+        sms = 'El campo Nombre del firmante solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_cargoFirmanteContrato(self, value):
+        sms = 'El campo Cargo del firmante solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_resolucionFirmante(self, value):
+        sms = 'El campo Segun consta es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Segun consta por solo acepta valores alfanumericos.'
+        validarSoloNumerosYletras(value, sms)
+        return value
+
+    def validate_fechaResolucionFirmante(self, value):
+        sms = 'El campo Fecha resolucion firmante no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
+
+    def validate_estado(self, value):
+        sms = 'El campo Estado es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tiempoVigencia(self, value):
+        sms = 'El campo Tiempo de vigencia es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_banco(self, value):
+        sms = 'El campo Banco es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Banco solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_sucursal(self, value):
+        sms = 'El campo Sucursal es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Sucursal solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        return value
+
+    def validate_nombreComercial(self, value):
+        if value:
+            sms = 'El campo Nombre comercial solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
+        return value
+
+    def validate_telefono(self, value):
+        if value:
+            sms = 'El campo telefono debe tener 8 digitos.'
+            validarLongitud(value, 8, sms)
+        return value
+
+    def getMunicipioComercial(self, instante):
+        if not instante.fk_municipioComercial == None:
+            return instante.fk_municipioComercial.nombre
+        return ''
+
+
+    def getActividadComercial(self, instante):
+        if not instante.fk_modalidad == None:
+            return instante.fk_modalidad.nombre
+        return ''
+
     def to_representation(self, instance):
         return {
             'fechaCreacionContrato': instance.fechaCreacionContrato,
@@ -394,11 +511,11 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'emisionResolucionUtilizador': instance.emisionResolucionUtilizador,
             'resolucionFirmante': instance.resolucionFirmante,
             'fechaResolucionFirmante': instance.fechaResolucionFirmante,
-            'nombreComercial': instance.nombreComercial,
-            'provinciaComercial': formatoLargoProvincia(instance.provincia),
-            'fk_municipioComercial': instance.fk_municipio.nombre,
+            'nombreComercial': instance.nombreComercial if instance.nombreComercial != None or instance.nombreComercial != '' else '________',
+            'provinciaComercial': formatoLargoProvincia(instance.provinciaComercial) if instance.provinciaComercial != None or instance.provinciaComercial != '' else '________',
+            'fk_municipioComercial': self.getMunicipioComercial(instance),
             'direccionComercial': instance.direccionComercial,
-            'actividadComercial': instance.actividadComercial,
+            'actividadComercial': self.getActividadComercial(instance),
             'email': instance.email,
             'telefono': instance.telefono,
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,
@@ -411,6 +528,83 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaPersonaNatural
         fields = '__all__'
+
+    def validate_ci(self, value):
+        sms = 'El campo Carnet identidad de tener 11 digitos.'
+        validarLongitud(value,11,sms)
+        sms = 'El campo Carnet identidad debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
+        return value
+
+    def validate_direccion(self, value):
+        sms = 'El campo Direccion es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_fk_modalidad(self, value):
+        sms = 'El campo Actividad a ejercer es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_nit(self, value):
+        sms = 'El campo NIT debe tener 11 digitos.'
+        validarLongitud(value, 11, sms)
+        sms = 'El campo NIT debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
+        return value
+
+    def validate_cuentaCorriente(self, value):
+        sms = 'El campo Cuenta corriente debe tener 16 digitos.'
+        validarLongitud(value, 16, sms)
+        sms = 'El campo Cuenta corriente debe ser mayor a 0.'
+        validarMayorQue0(value, sms)
+        return value
+
+    def validate_banco(self, value):
+        sms = 'El campo Banco es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Banco solo acepta valores alfabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_sucursal(self, value):
+        sms = 'El campo Sucursal es requerido.'
+        validarNoNuloOvacio(value, sms)
+        sms = 'El campo Sucursal solo acepta valores numericos.'
+        validarSoloNumeros(value, sms)
+        return value
+
+    def validate_estado(self, value):
+        sms = 'El campo Estado es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tiempoVigencia(self, value):
+        sms = 'El campo Tiempo de vigencia es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_nombreComercial(self, value):
+        if value:
+            sms = 'El campo Nombre comercial solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
+        return value
+
+    def validate_telefono(self, value):
+        if value:
+            sms = 'El campo telefono debe tener 8 digitos.'
+            validarLongitud(value, 8, sms)
+        return value
+
+    def getMunicipioComercial(self, instante):
+        if not instante.fk_municipioComercial == None:
+            return instante.fk_municipioComercial.nombre
+        return ''
+
+    def getActividadComercial(self, instante):
+        if not instante.fk_modalidad == None:
+            return instante.fk_modalidad.nombre
+        return ''
 
     def to_representation(self, instance):
         return {
@@ -437,9 +631,9 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'folio': instance.folio,
             'nombreComercial': instance.nombreComercial,
             'provinciaComercial': instance.provinciaComercial,
-            'fk_municipioComercial': instance.fk_municipio.nombre,
+            'fk_municipioComercial': self.getMunicipioComercial(instance),
             'direccionComercial': instance.direccionComercial,
-            'actividadComercial': instance.actividadComercial,
+            'actividadComercial': self.getActividadComercial(instance),
             'email': instance.email,
             'telefono': instance.telefono,
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,

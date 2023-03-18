@@ -6,7 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.licenciamiento.api.serializers import *
-from apps.utils import getElementosPaginados
+from apps.utils import getElementosPaginados, getFechaExpiracion
+
 
 #API DE SECTOR
 class sectorViewSet(viewsets.ModelViewSet):
@@ -325,9 +326,7 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        date = datetime.datetime.today().date()
-        year = date.year+int(request.data['tiempoVigencia'])
-        request.data['fechaVencimiento'] = datetime.datetime(year,date.month,date.day).date()
+        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -441,6 +440,7 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
+        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -472,7 +472,10 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = list(ContratoLicenciaPersonaJuridica.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
+        query = ContratoLicenciaPersonaJuridica.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        if not query.exists():
+            return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
+        contrato = list(query).pop()
         serializer = contratoLicenciaPersonaJuridicaSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -493,6 +496,9 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
+        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
+        print(request.data['fechaVencimiento'], type(request.data['fechaVencimiento']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -524,7 +530,10 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        contrato = list(ContratoLicenciaPersonaNatural.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
+        query = ContratoLicenciaPersonaNatural.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        if not query.exists():
+            return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
+        contrato = list(query).pop()
         serializer = contratoLicenciaPersonaNaturalSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

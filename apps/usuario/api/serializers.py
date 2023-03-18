@@ -24,7 +24,8 @@ class cargoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nombre(self, value):
-        validarSoloLetras(value)
+        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        validarSoloLetras(value, sms)
         return value
 
 class customTokenObtainPairSerializer(TokenObtainPairSerializer):

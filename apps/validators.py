@@ -47,3 +47,9 @@ def validarFechaMenorAfechaActual(value, sms):
     if value > fechaActual:
         raise serializers.ValidationError([sms])
     return value
+
+# FUNCION PARA VALIDAR QUE UN VALOR SEA MAYOR A 0
+def validarMayorQue0(value, sms):
+    if value < 0:
+        raise serializers.ValidationError([sms])
+    return value

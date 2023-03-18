@@ -21,12 +21,12 @@ class ContratoLicenciaBase(models.Model):
     direccionBanco = models.CharField(verbose_name='Direccion del Banco', max_length=250, blank=True, null=True)
     provincia = models.CharField(verbose_name='Provincia', max_length=50, choices=CHOICE_PROVINCIA, blank=False, null=False)
     fechaCreacionContrato = models.DateField(verbose_name='Fecha en que se crea el contrato', auto_now=True)
-    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
+    numeroLicencia = models.PositiveIntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
     nit = models.BigIntegerField(verbose_name='NIT', unique=True, blank=False, null=False)
-    codigo = models.IntegerField(verbose_name='Codigo', unique=True, blank=False, null=False)
+    codigo = models.PositiveIntegerField(verbose_name='Codigo', unique=True, blank=False, null=False)
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=True)
     estado = models.CharField(verbose_name='Estado', max_length=50, choices=CHOICE_ESTADO, blank=True, null=True)
-    tiempoVigencia = models.IntegerField(verbose_name='Tiempo de vigencia', blank=True, null=True)
+    tiempoVigencia = models.PositiveIntegerField(verbose_name='Tiempo de vigencia', blank=True, null=True)
     fechaVecimiento = models.DateField(verbose_name='Fecha de vencimiento', blank=True, null=True)
 
     class Meta:
@@ -92,7 +92,7 @@ class Modalidad(Base):
         return f'Modalidad: {self.nombre}.'
 
 class Municipio(Base):
-    codigo = models.IntegerField(verbose_name='Codigo', blank=True, null=True)
+    codigo = models.PositiveIntegerField(verbose_name='Codigo', blank=True, null=True)
 
     class Meta:
         db_table = 'Municipio'
@@ -132,7 +132,7 @@ class Representante(models.Model):
     ci = models.BigIntegerField(verbose_name='CI', unique=True, blank=False, null=False)
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=False, null=False)
     nivelEscolaridad = models.CharField(verbose_name='Nivel de escolaridad', choices=CHOICE_NIVEL_ESCOLARIDAD, max_length=150, blank=False, null=False)
-    codigo = models.IntegerField(verbose_name='Codigo', unique=True,  blank=False, null=False)
+    codigo = models.PositiveIntegerField(verbose_name='Codigo', unique=True,  blank=False, null=False)
     email = models.CharField(verbose_name='Correo', max_length=50, blank=True, null=True)
     esActivo = models.BooleanField(default=True)
 
@@ -165,8 +165,8 @@ class ContratoMandatoRepresentante(models.Model):
     fechaLicencia = models.DateField(verbose_name='Fecha de Licencia', blank=True, null=True)
     fechaInscripcion = models.DateField(verbose_name='Fecha de Inscripcion', blank=True, null=True)
     tipoActividad = models.CharField(verbose_name='Tipo de actividad', choices=CHOICE_ACTIVIDAD, max_length=50, blank=False, null=False)
-    numeroLicencia = models.IntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
-    numeroContrato = models.IntegerField(verbose_name='Numero de Contrato', unique=True, blank=True, null=True)
+    numeroLicencia = models.PositiveIntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
+    numeroContrato = models.PositiveIntegerField(verbose_name='Numero de Contrato', unique=True, blank=True, null=True)
     remuneracion = models.IntegerField(verbose_name='Remuneracion', blank=True, null=True)
 
     class Meta:
@@ -200,18 +200,20 @@ class ContratoLicenciaEstatal(ContratoLicenciaBase):
         return f'Contrato licencia estatal numero {self.numeroLicencia} perteneciente a: {self.fk_utilizador.nombre}.'
 
 class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
+    fk_modalidad = models.ForeignKey(Modalidad, verbose_name='Actividad Comercial', blank=True, null=True, on_delete=models.CASCADE)
+    fk_municipioComercial = models.ForeignKey(Municipio, verbose_name='Municipio Comercial', related_name="municipioComercialPN",
+                                              blank=True, null=True, on_delete=models.CASCADE)
     ci = models.BigIntegerField(verbose_name='CI', unique=True, blank=False, null=False)
-    codigoIdentificadorFiscal = models.IntegerField(verbose_name='Codigo Identificacion fiscal RC50', unique=True, blank=False, null=False)
-    folio = models.IntegerField(verbose_name='Folio', unique=True, blank=False, null=False)
+    codigoIdentificadorFiscal = models.PositiveIntegerField(verbose_name='Codigo Identificacion fiscal RC50', unique=True, blank=False, null=False)
+    folio = models.PositiveIntegerField(verbose_name='Folio', unique=True, blank=False, null=False)
     cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', unique=True, blank=False, null=False)
-    tarifa = models.IntegerField(verbose_name='Tarifa', blank=False, null=False)
+    tarifa = models.PositiveIntegerField(verbose_name='Tarifa', blank=False, null=False)
     local = models.CharField(verbose_name='Local', max_length=150, blank=True, null=True)
     nombreComercial = models.CharField(verbose_name='Nombre Comercial', max_length=150, blank=True, null=True)
     direccionComercial = models.CharField(verbose_name='Direccion Comercial', max_length=150, blank=True, null=True)
     provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
-    actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50,blank=True, null=True)
     email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
-    telefono = models.IntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
+    telefono = models.PositiveIntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
     ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial',
                                                choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
     representacionObrasEscenicas = models.BooleanField(default=False)
@@ -227,16 +229,18 @@ class ContratoLicenciaPersonaNatural(ContratoLicenciaBase):
 
 
 class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
+    fk_modalidad = models.ForeignKey(Modalidad, verbose_name='Actividad Comercial', blank=True, null=True,
+                                     on_delete=models.CASCADE)
     resolucionUtilizador = models.CharField(verbose_name='Resolucion Utilizador', max_length=200, blank=True, null=True)
     fechaResolucionUtilizador = models.DateField(verbose_name='Fecha resolucion Utilizador', blank=True, null=True)
     emisionResolucionUtilizador = models.CharField(verbose_name='Resolucion utilizador (emitida/creda por)',
                                                    max_length=150, blank=True, null=True)
     resolucionFirmante = models.CharField(verbose_name='Resolucion del firmante', max_length=200, blank=True, null=True)
     fechaResolucionFirmante = models.DateField(verbose_name='Fecha resolucion firmante', blank=True, null=True)
-    fk_municipioComercial = models.ForeignKey(Municipio, verbose_name='Municipio', related_name="municipioComercial", blank=True, null=True, on_delete=models.CASCADE)
+    fk_municipioComercial = models.ForeignKey(Municipio, verbose_name='Municipio Comercial', related_name="municipioComercial", blank=True, null=True, on_delete=models.CASCADE)
     codigoOnei = models.CharField(verbose_name='Codigo Onei', max_length=50, unique=True, blank=False, null=False)
     tipo = models.CharField(verbose_name='Tipo', max_length=150, choices=CHOICE_TIPO_PERSONA_JURIDICA, blank=True, null=True)
-    tarifa = models.IntegerField(verbose_name='Tarifa', blank=True, null=True)
+    tarifa = models.PositiveIntegerField(verbose_name='Tarifa', blank=True, null=True)
     cuentaCorriente = models.BigIntegerField(verbose_name='Cuenta corriente', unique=True, blank=False, null=False)
     nombreFirmanteContrato = models.CharField(verbose_name='Nombre de quien firma el contrato', max_length=150, blank=False, null=False)
     cargoFirmanteContrato = models.CharField(verbose_name='Cargo de quien firma el contrato', max_length=150, blank=False, null=False)
@@ -244,9 +248,8 @@ class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
     nombreComercial = models.CharField(verbose_name='Nombre Comercial', max_length=150, blank=True, null=True)
     direccionComercial = models.CharField(verbose_name='Direccion Comercial', max_length=150, blank=True, null=True)
     provinciaComercial = models.CharField(verbose_name='Provincia Comercial', max_length=150, blank=True, null=True)
-    actividadComercial = models.CharField(verbose_name='Actividad Comercial', choices=CHOICE_ACTIVIDAD, max_length=50, blank=True, null=True)
     email = models.EmailField(verbose_name='Correo', max_length=150, blank=True, null=True)
-    telefono = models.IntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
+    telefono = models.PositiveIntegerField(verbose_name='Telefono', unique=True, blank=True, null=True)
     ejecucionObrasComercial = models.CharField(verbose_name='Tipo de ejecucion de obra comercial', choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=50, blank=True, null=True)
     representacionObrasEscenicas = models.BooleanField(default=False)
     comunicacionObrasAudioVisuales = models.BooleanField(default=False)
@@ -261,14 +264,14 @@ class ContratoLicenciaPersonaJuridica(ContratoLicenciaBase):
 
 class Anexo72Gaviota(Anexo72Base):
     categoria = models.CharField(verbose_name='Categoria', max_length=150, blank=False, null=False)
-    numeroHabitacion = models.IntegerField(verbose_name='Numero Habitacion', blank=False, null=False)
+    numeroHabitacion = models.PositiveIntegerField(verbose_name='Numero Habitacion', blank=False, null=False)
     periodo = models.CharField(verbose_name='Periodo', max_length=150, blank=False, null=False)
-    tarifaTemporadaAlta = models.IntegerField(verbose_name='Temporada alta', blank=False, null=False)
-    tarifaTemporadaBaja = models.IntegerField(verbose_name='Temporada baja', blank=False, null=False)
-    tarifaOcupacionInferior = models.IntegerField(verbose_name='Ocupacion por debajo del 30%', blank=False, null=False)
-    importeTemporadaAlta = models.IntegerField(verbose_name='Importe', blank=True, null=True)
-    importeTemporadaBaja = models.IntegerField(verbose_name='Importe', blank=True, null=True)
-    importeTemporadaOcupacionInferior = models.IntegerField(verbose_name='Importe', blank=True, null=True)
+    tarifaTemporadaAlta = models.PositiveIntegerField(verbose_name='Temporada alta', blank=False, null=False)
+    tarifaTemporadaBaja = models.PositiveIntegerField(verbose_name='Temporada baja', blank=False, null=False)
+    tarifaOcupacionInferior = models.PositiveIntegerField(verbose_name='Ocupacion por debajo del 30%', blank=False, null=False)
+    importeTemporadaAlta = models.PositiveIntegerField(verbose_name='Importe', blank=True, null=True)
+    importeTemporadaBaja = models.PositiveIntegerField(verbose_name='Importe', blank=True, null=True)
+    importeTemporadaOcupacionInferior = models.PositiveIntegerField(verbose_name='Importe', blank=True, null=True)
 
     class Meta:
         db_table = 'Anexo72Gaviota'
@@ -280,9 +283,9 @@ class Anexo72Gaviota(Anexo72Base):
 
 class Anexo72Cimex(Anexo72Base):
     locacionModalidad = models.CharField(verbose_name='Locacion', max_length=150, blank=False, null=False)
-    cantidadPlazas = models.IntegerField(verbose_name='Cantidad de plazas', blank=False, null=False)
+    cantidadPlazas = models.PositiveIntegerField(verbose_name='Cantidad de plazas', blank=False, null=False)
     tarifa = models.CharField(verbose_name='Tarifa', max_length=150, blank=False, null=False)
-    importe = models.IntegerField(verbose_name='Importe', blank=True, null=True)
+    importe = models.PositiveIntegerField(verbose_name='Importe', blank=True, null=True)
 
     class Meta:
         db_table = 'Anexo72Cimex'
@@ -296,7 +299,7 @@ class Anexo72TRD(Anexo72Base):
     locacion = models.CharField(verbose_name='Locacion', max_length=150, blank=False, null=False)
     modalidad = models.CharField(verbose_name='Modalidad', max_length=150, blank=False, null=False)
     tarifa = models.CharField(verbose_name='Tarifa', max_length=150, blank=False, null=False)
-    importe = models.IntegerField(verbose_name='Importe', blank=True, null=True)
+    importe = models.PositiveIntegerField(verbose_name='Importe', blank=True, null=True)
 
     class Meta:
         db_table = 'Anexo72TRD'
@@ -332,14 +335,14 @@ class Anexo71AudioVisual(Anexo71Base):
         return f'Anexo 71 audiovisual  vinculado al contrato {self.fk_contratoLicenciaEstatal.numeroLicencia}.'
 
 class Proforma(models.Model):
-    resolucion = models.IntegerField(verbose_name='Resolucion', blank=True, null=True)
+    resolucion = models.PositiveIntegerField(verbose_name='Resolucion', blank=True, null=True)
     nombre = models.CharField(verbose_name='Nombre', max_length=250, blank=False, null=False)
     titulo = models.CharField(verbose_name='Titulo', max_length=255, blank=True, null=True)
     encabezado = models.TextField(verbose_name='Encabezado de la proforma', blank=True, null=True)
     descripcion = models.TextField(verbose_name='Cuerpo de la proforma', blank=False, null=False)
     descripcion2daParte = models.TextField(verbose_name='Cuerpo de la proforma seguda parte', blank=True, null=True)
     descripcion3raParte = models.TextField(verbose_name='Cuerpo de la proforma tercera parte', blank=True, null=True)
-    tipo = models.IntegerField(verbose_name='Tipo Proforma', choices=CHOICE_TIPO_PROFORMA, blank=True, null=True)
+    tipo = models.PositiveIntegerField(verbose_name='Tipo Proforma', choices=CHOICE_TIPO_PROFORMA, blank=True, null=True)
 
     class Meta:
         db_table = 'Proforma'
