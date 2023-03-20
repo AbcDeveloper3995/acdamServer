@@ -326,7 +326,8 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
+        if not request.data['tiempoVigencia'] == None:
+            request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -440,7 +441,8 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
+        if not request.data['tiempoVigencia'] == None:
+            request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -496,9 +498,8 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        request.data['fechaVencimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
-        print(request.data['fechaVencimiento'], type(request.data['fechaVencimiento']))
+        if not request.data['tiempoVigencia'] == None:
+            request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -551,7 +552,7 @@ class anexo71MusicaViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -598,7 +599,7 @@ class anexo71AudiovisualViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -645,7 +646,7 @@ class anexo72CimexViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -692,7 +693,7 @@ class anexo72GaviotaViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
@@ -739,7 +740,7 @@ class anexo72TrdViewSet(viewsets.ModelViewSet):
         return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):

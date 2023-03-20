@@ -54,3 +54,10 @@ def getFechaExpiracion(anos):
     date = datetime.datetime.today().date()
     year = date.year + anos
     return datetime.datetime(year, date.month, date.day).date()
+
+#FUNCION PARA OBTENER LA DESCRIPCION DE LA PERIOCIDAD DE ENTREGA
+def getDescripcionPeriocidadEntrega(value):
+    if value == 1:
+        return 'Trimestral musica viva'
+    else:
+        return 'Bianual musica grabada'

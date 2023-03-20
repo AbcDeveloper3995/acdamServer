@@ -2,6 +2,8 @@ from django.db import models
 
 from apps.licenciamiento.choices import *
 from apps.usuario.models import Usuario
+from apps.licenciamiento.choices import *
+from apps.usuario.models import Usuario
 
 class Base(models.Model):
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.licenciamiento.models import *
-from apps.utils import formatoLargoProvincia
+from apps.utils import formatoLargoProvincia, getFechaExpiracion, getDescripcionPeriocidadEntrega
 from apps.validators import *
 
 
@@ -592,8 +592,14 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
 
     def validate_telefono(self, value):
         if value:
-            sms = 'El campo telefono debe tener 8 digitos.'
+            sms = 'El campo Telefono debe tener 8 digitos.'
             validarLongitud(value, 8, sms)
+        return value
+
+    def validate_local(self, value):
+        if value:
+            sms = 'El campo Local solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
         return value
 
     def getMunicipioComercial(self, instante):
@@ -608,6 +614,7 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'id': instance.pk,
             'fechaCreacionContrato': instance.fechaCreacionContrato,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
@@ -630,7 +637,7 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'codigoIdentificadorFiscal': instance.codigoIdentificadorFiscal,
             'folio': instance.folio,
             'nombreComercial': instance.nombreComercial,
-            'provinciaComercial': instance.provinciaComercial,
+            'provinciaComercial': formatoLargoProvincia(instance.provincia),
             'fk_municipioComercial': self.getMunicipioComercial(instance),
             'direccionComercial': instance.direccionComercial,
             'actividadComercial': self.getActividadComercial(instance),
@@ -648,22 +655,37 @@ class anexo71MusicaSerializer(serializers.ModelSerializer):
         model = Anexo71Musica
         fields = '__all__'
 
+    def validate_locacion(self, value):
+        sms = 'El campo Locacion solo debe contener valores aflabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_tarifa(self, value):
+        sms = 'Tarifa no valida.'
+        validarTarifaAnexos(value, sms)
+        return value
+
 class anexo71MusicaListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo71Musica
         fields = '__all__'
 
+    def getJuridico(self, instante):
+        if not instante.fk_contratoLicenciaPersonaJ == None:
+            return instante.fk_contratoLicenciaPersonaJ.id
+        return ''
+
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
-            'fk_contratoLicenciaPersonaJ': instance.fk_contratoLicenciaPersonaJ,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
+            'fk_contratoLicenciaPersonaJ': self.getJuridico(instance),
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
             'periocidadPago': instance.periocidadPago,
             'tipoMusica': instance.tipoMusica,
             'modalidad': instance.modalidad,
-            'periocidadEntrega': instance.periocidadEntrega,
+            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
                 }
 
 #SERIALIZADORES DE Anexo71Audiovisual
@@ -672,21 +694,36 @@ class anexo71AudiovisualSerializer(serializers.ModelSerializer):
         model = Anexo71AudioVisual
         fields = '__all__'
 
+    def validate_locacion(self, value):
+        sms = 'El campo Locacion solo debe contener valores aflabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_tarifa(self, value):
+        sms = 'Tarifa no valida.'
+        validarTarifaAnexos(value, sms)
+        return value
+
 class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo71AudioVisual
         fields = '__all__'
 
+    def getJuridico(self, instante):
+        if not instante.fk_contratoLicenciaPersonaJ == None:
+            return instante.fk_contratoLicenciaPersonaJ.id
+        return ''
+
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
-            'fk_contratoLicenciaPersonaJ': instance.fk_contratoLicenciaPersonaJ,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
+            'fk_contratoLicenciaPersonaJ': self.getJuridico(instance),
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
             'periocidadPago': instance.periocidadPago,
             'categoriaAudiovisual': instance.categoriaAudiovisual,
-            'periocidadEntrega': instance.periocidadEntrega,
+            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
                 }
 
 #SERIALIZADORES DE Anexo72CIMEX
@@ -694,6 +731,16 @@ class anexo72CimexSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72Cimex
         fields = '__all__'
+
+    def validate_locacionModalidad(self, value):
+        sms = 'El campo Locacion solo debe contener valores aflabeticos.'
+        validarSoloLetras(value, sms)
+        return value
+
+    def validate_tarifa(self, value):
+        sms = 'Tarifa no valida.'
+        validarSoloNumeros(value, sms)
+        return value
 
 class anexo72CimexListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -703,13 +750,13 @@ class anexo72CimexListarSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
             'locacionModalidad': instance.locacionModalidad,
             'tarifa': instance.tarifa,
             'periocidadPago': instance.periocidadPago,
             'cantidadPlazas': instance.cantidadPlazas,
             'importe': instance.importe,
-            'periocidadEntrega': instance.periocidadEntrega,
+            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
                 }
 
 #SERIALIZADORES DE Anexo72Gaviota
@@ -718,16 +765,36 @@ class anexo72GaviotaSerializer(serializers.ModelSerializer):
         model = Anexo72Gaviota
         fields = '__all__'
 
+    def validate_periodo(self, value):
+        sms = 'El campo Periodo solo acepta valores alfanumericos.'
+        validarSoloNumerosYletras(value, sms)
+        return value
+
+    def validate_tarifa(self, value):
+        sms = 'Tarifa no valida.'
+        validarSoloNumeros(value, sms)
+        return value
+
 class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72Gaviota
         fields = '__all__'
 
+    def getFormatoCategorias(self, categoria):
+        if categoria == '2estrellas':
+            return '2 Estrellas'
+        if categoria == '3estrellas':
+            return '3 Estrellas'
+        if categoria == '4estrellas':
+            return '4 Estrellas'
+        if categoria == '5estrellas':
+            return '5 Estrellas'
+
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
-            'categoria': instance.categoria,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
+            'categoria': self.getFormatoCategorias(instance.categoria),
             'numeroHabitacion': instance.numeroHabitacion,
             'periodo': instance.periodo,
             'periocidadPago': instance.periocidadPago,
@@ -737,7 +804,7 @@ class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
             'importeTemporadaAlta': instance.importeTemporadaAlta,
             'importeTemporadaBaja': instance.importeTemporadaBaja,
             'importeTemporadaOcupacionInferior': instance.importeTemporadaOcupacionInferior,
-            'periocidadEntrega': instance.periocidadEntrega,
+            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
                 }
 
 #SERIALIZADORES DE Anexo72TRD
@@ -745,6 +812,11 @@ class anexo72TrdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72TRD
         fields = '__all__'
+
+    def validate_locacion(self, value):
+        sms = 'El campo Locacion solo debe contener valores aflabeticos.'
+        validarSoloLetras(value, sms)
+        return value
 
 class anexo72TrdListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -754,13 +826,13 @@ class anexo72TrdListarSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.pk,
-            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal,
+            'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
             'periocidadPago': instance.periocidadPago,
             'importe': instance.importe,
             'modalidad': instance.modalidad,
-            'periocidadEntrega': instance.periocidadEntrega,
+            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
                 }
 
 

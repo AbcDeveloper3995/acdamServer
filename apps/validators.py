@@ -53,3 +53,11 @@ def validarMayorQue0(value, sms):
     if value < 0:
         raise serializers.ValidationError([sms])
     return value
+
+# FUNCION PARA VALIDAR TARIFAS SOLO EN LOS ANEXOS 71
+def validarTarifaAnexos(value, sms):
+    p = re.compile(u"[a-zA-ZñÑáéíóú%$0-9 ]+$")
+    m = p.match(value)
+    if not m:
+        raise serializers.ValidationError([sms])
+    return value
