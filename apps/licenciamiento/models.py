@@ -110,6 +110,7 @@ class Utilizador(models.Model):
     tipo = models.CharField(verbose_name='Tipo', max_length=50, choices=CHOICE_UTILIZADOR, blank=False, null=False)
     tipoNoEstatal = models.CharField(verbose_name='Tipo de no estatal', choices=CHOICE_UTILIZADOR_NO_ESTATAL, max_length=100, blank=True, null=True)
     tipoDerecho = models.CharField(verbose_name='Tipo de Derecho', max_length=50, choices=CHOICE_DERECHOS, blank=False, null=False)
+    tieneContrato = models.BooleanField(default=False)
     esActivo = models.BooleanField(default=True)
 
     class Meta:

@@ -213,6 +213,12 @@ class utilizadorViewSet(viewsets.ModelViewSet):
         data = getElementosPaginados(self.kwargs['pk'], Utilizador, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'], url_path='getUtilizadoresSinContrato')
+    def getUtilizadoresSinContrato(self, request, *args, **kwargs):
+        query = Utilizador.objects.filter(tieneContrato=False)
+        serializer = utilizadorListarSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 #API DE REPRESENTANTE
 class representanteViewSet(viewsets.ModelViewSet):
     serializer_class = representanteSerializer
@@ -330,6 +336,7 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
             request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            Utilizador.objects.filter(pk=request.data['fk_utilizador']).update(tieneContrato=True)
             serializer.save()
             return Response({'message': 'Contrato creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -359,7 +366,8 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        query = ContratoLicenciaEstatal.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        date = datetime.datetime.now().date()
+        query = ContratoLicenciaEstatal.objects.filter(fk_usuario__id=self.kwargs['pk'], fechaCreacionContrato=date)
         if not query.exists():
             return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
         contrato = list(query).pop()
@@ -474,7 +482,8 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        query = ContratoLicenciaPersonaJuridica.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        date = datetime.datetime.now().date()
+        query = ContratoLicenciaPersonaJuridica.objects.filter(fk_usuario__id=self.kwargs['pk'], fechaCreacionContrato=date)
         if not query.exists():
             return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
         contrato = list(query).pop()
@@ -531,7 +540,8 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getlastContrato')
     def getlastContrato(self, request, *args, **kwargs):
-        query = ContratoLicenciaPersonaNatural.objects.filter(fk_usuario__id=self.kwargs['pk'])
+        date = datetime.datetime.now().date()
+        query = ContratoLicenciaPersonaNatural.objects.filter(fk_usuario__id=self.kwargs['pk'], fechaCreacionContrato=date)
         if not query.exists():
             return Response({'error': 'El contrato no ha sido creado.'}, status=status.HTTP_400_BAD_REQUEST)
         contrato = list(query).pop()
