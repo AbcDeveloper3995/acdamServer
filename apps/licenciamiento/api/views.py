@@ -837,3 +837,56 @@ class contratoMandatoViewSet(viewsets.ModelViewSet):
         contrato = list(ContratoMandatoRepresentante.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
         serializer = contratoMandatoListarSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+#API DE CLASIFICADOR PROFORMA
+class clasificadorProformaViewSet(viewsets.ModelViewSet):
+    serializer_class = clasificadorProformaSerializer
+    list_serializer_class = clasificadorProformaListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Configuracion creada correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        proforma = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(proforma)
+        return Response({'message': 'Detalles del Configuracion', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        proforma = self.get_queryset(pk)
+        if proforma:
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Configuracion modificada correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Configuracion no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        proforma = self.get_queryset(pk)
+        if proforma:
+            proforma.delete()
+            return Response({'message': 'Configuracion eliminada correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Configuracion no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='paginado')
+    def paginado(self, request, *args, **kwargs):
+        data = getElementosPaginados(self.kwargs['pk'], ClasificadorProforma, self.list_serializer_class)
+        return Response(data, status=status.HTTP_200_OK)

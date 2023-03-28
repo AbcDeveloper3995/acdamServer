@@ -80,6 +80,7 @@ class utilizadorListarSerializer(serializers.ModelSerializer):
             'fk_sector': instance.fk_sector.nombre,
             'tipoNoEstatal': instance.tipoNoEstatal,
             'tipoDerecho': instance.tipoDerecho,
+            'tieneContrato': instance.tieneContrato,
                 }
 
 class utilizadorSerializer(serializers.ModelSerializer):
@@ -339,6 +340,16 @@ class proformaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proforma
         fields = '__all__'
+
+    def validate_titulo(self, value):
+        sms = 'El campo Titulo es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_encabezado(self, value):
+        sms = 'El campo Encabezado es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
 
 class proformaListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -862,7 +873,6 @@ class contratoMandatoSerializer(serializers.ModelSerializer):
         validarFechaMenorAfechaActual(value, sms)
         return value
 
-
 class contratoMandatoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoMandatoRepresentante
@@ -887,4 +897,55 @@ class contratoMandatoListarSerializer(serializers.ModelSerializer):
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
             'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
+                }
+
+
+#SERIALIZADORES DE CLASIFICADOR PROFORMA
+class clasificadorProformaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClasificadorProforma
+        fields = '__all__'
+
+    def validate_fk_proforma(self, value):
+        sms = 'El campo Proforma es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_fk_sector(self, value):
+        sms = 'El campo Sector es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tipo(self, value):
+        sms = 'El campo Tipo es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tipoDerecho(self, value):
+        sms = 'El campo Derecho es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+class clasificadorProformaListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClasificadorProforma
+        fields = '__all__'
+
+    def getSector(self, instance):
+        if not instance.fk_sector == None:
+            return instance.fk_sector.nombre
+        return ''
+
+    def getTipoDerecho(self, instance):
+        if not instance.tipoDerecho == None:
+            return instance.tipoDerecho
+        return ''
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'fk_proforma': instance.fk_proforma.nombre,
+            'fk_sector': self.getSector(instance),
+            'tipo': 'Estatal' if instance.tipo == '1' else 'No estatal',
+            'tipoDerecho': self.getTipoDerecho(instance),
                 }
