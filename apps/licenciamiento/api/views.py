@@ -320,6 +320,10 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
     list_serializer_class = contratoLicEstatalListarSerializer
 
     def get_queryset(self, pk=None):
+        date = datetime.datetime.now().date()
+        fechaExpiracion = date + timedelta(days=7)
+        ContratoLicenciaEstatal.objects.filter(fechaVecimiento=fechaExpiracion).update(estadoVigencia=2)
+        ContratoLicenciaEstatal.objects.filter(fechaVecimiento__lte=date).update(estadoVigencia=3)
         if pk is None:
             return self.serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
@@ -437,6 +441,10 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
     list_serializer_class = contratoLicenciaPersonaJuridicaListarSerializer
 
     def get_queryset(self, pk=None):
+        date = datetime.datetime.now().date()
+        fechaExpiracion = date + timedelta(days=7)
+        ContratoLicenciaPersonaJuridica.objects.filter(fechaVecimiento=fechaExpiracion).update(estadoVigencia=2)
+        ContratoLicenciaPersonaJuridica.objects.filter(fechaVecimiento__lte=date).update(estadoVigencia=3)
         if pk is None:
             return self.serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()
@@ -495,6 +503,10 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
     serializer_class = contratoLicenciaPersonaNaturalSerializer
 
     def get_queryset(self, pk=None):
+        date = datetime.datetime.now().date()
+        fechaExpiracion = date + timedelta(days=7)
+        ContratoLicenciaPersonaNatural.objects.filter(fechaVecimiento=fechaExpiracion).update(estadoVigencia=2)
+        ContratoLicenciaPersonaNatural.objects.filter(fechaVecimiento__lte=date).update(estadoVigencia=3)
         if pk is None:
             return self.serializer_class.Meta.model.objects.all()
         return self.serializer_class.Meta.model.objects.filter(id=pk).first()

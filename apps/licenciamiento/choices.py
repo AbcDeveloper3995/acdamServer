@@ -97,3 +97,9 @@ CHOICE_CATEGORIA_HOTEL = (
     ('4estrellas', '4 Estrellas'),
     ('5estrellas', '5 Estrellas'),
 )
+
+CHOICE_VIGENCIA = (
+    (1, 'Vigente'),
+    (2, 'Por Vencer'),
+    (3, 'Expirado')
+)

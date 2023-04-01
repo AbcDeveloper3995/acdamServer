@@ -30,6 +30,7 @@ class ContratoLicenciaBase(models.Model):
     estado = models.CharField(verbose_name='Estado', max_length=50, choices=CHOICE_ESTADO, blank=True, null=True)
     tiempoVigencia = models.PositiveIntegerField(verbose_name='Tiempo de vigencia', blank=True, null=True)
     fechaVecimiento = models.DateField(verbose_name='Fecha de vencimiento', blank=True, null=True)
+    estadoVigencia = models.IntegerField(verbose_name='Estado de vigencia', default=1, choices=CHOICE_VIGENCIA, blank=True, null=True)
 
     class Meta:
         abstract = True

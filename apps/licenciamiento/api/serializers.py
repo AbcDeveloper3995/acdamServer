@@ -333,6 +333,7 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
             'resolucionFirmante': instance.resolucionFirmante,
             'fechaResolucionFirmante': instance.fechaResolucionFirmante,
             'emitido': instance.emitido,
+            'estadoVigencia': instance.estadoVigencia,
                 }
 
 #SERIALIZADORES DE PROFORMA
@@ -348,6 +349,11 @@ class proformaSerializer(serializers.ModelSerializer):
 
     def validate_encabezado(self, value):
         sms = 'El campo Encabezado es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_tipo(self, value):
+        sms = 'El campo Tipo es requerido.'
         validarNoNuloOvacio(value, sms)
         return value
 
