@@ -188,6 +188,11 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaEstatal
         fields = '__all__'
 
+    def validate_numeroLicencia(self, value):
+        sms = 'El campo numero Licencia debe tener una longitd de hasta 10 caracteres.'
+        validarLongitudMaxima(value, 10, sms)
+        return value
+
     def validate_resolucionUtilizador(self, value):
         sms = 'El campo Resolucion utilizador es requerido.'
         validarNoNuloOvacio(value, sms)
@@ -225,8 +230,8 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
     def validate_codigoREEUP(self, value):
         sms = 'El campo Codigo REEUP solo acepta valores numericos.'
         validarSoloNumeros(value, sms)
-        sms = 'El campo Codigo REEUP debe tener 5 digitos .'
-        validarLongitud(value, 5, sms)
+        sms = 'El campo Codigo REEUP debe tener una longitd de hasta 10 caracteres.'
+        validarLongitudMaxima(value, 10, sms)
         return value
 
     def validate_nit(self, value):
@@ -244,8 +249,6 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         return value
 
     def validate_titular(self, value):
-        sms = 'El campo Titular es requerido.'
-        validarNoNuloOvacio(value, sms)
         sms = 'El campo Titular solo acepta valores alfabeticos.'
         validarSoloLetras(value, sms)
         return value
@@ -257,12 +260,12 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-    def validate_sucursal(self, value):
-        sms = 'El campo Sucursal es requerido.'
-        validarNoNuloOvacio(value, sms)
-        sms = 'El campo Sucursal solo acepta valores numericos.'
-        validarSoloNumeros(value, sms)
-        return value
+    # def validate_sucursal(self, value):
+    #     sms = 'El campo Sucursal es requerido.'
+    #     validarNoNuloOvacio(value, sms)
+    #     sms = 'El campo Sucursal solo acepta valores numericos.'
+    #     validarSoloNumeros(value, sms)
+    #     return value
 
     def validate_nombreFirmanteContrato(self, value):
         sms = 'El campo Nombre del firmante solo acepta valores alfabeticos.'
@@ -388,6 +391,11 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaPersonaJuridica
         fields = '__all__'
 
+    def validate_numeroLicencia(self, value):
+        sms = 'El campo numero Licencia debe tener una longitd de hasta 10 caracteres.'
+        validarLongitudMaxima(value, 10, sms)
+        return value
+
     def validate_tipo(self, value):
         sms = 'El campo Tipo es requerido.'
         validarNoNuloOvacio(value, sms)
@@ -413,8 +421,8 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
     def validate_codigoOnei(self, value):
         sms = 'El campo Codigo ONEI solo acepta valores numericos.'
         validarSoloNumeros(value, sms)
-        sms = 'El campo Codigo ONEI debe tener 5 digitos.'
-        validarLongitud(value, 5, sms)
+        sms = 'El campo Codigo ONEI debe tener una longitd de hasta 10 caracteres.'
+        validarLongitudMaxima(value, 10, sms)
         return value
 
     def validate_nit(self, value):
@@ -470,12 +478,12 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-    def validate_sucursal(self, value):
-        sms = 'El campo Sucursal es requerido.'
-        validarNoNuloOvacio(value, sms)
-        sms = 'El campo Sucursal solo acepta valores numericos.'
-        validarSoloNumeros(value, sms)
-        return value
+    # def validate_sucursal(self, value):
+    #     sms = 'El campo Sucursal es requerido.'
+    #     validarNoNuloOvacio(value, sms)
+    #     sms = 'El campo Sucursal solo acepta valores numericos.'
+    #     validarSoloNumeros(value, sms)
+    #     return value
 
     def validate_nombreComercial(self, value):
         if value:
@@ -546,6 +554,11 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
         model = ContratoLicenciaPersonaNatural
         fields = '__all__'
 
+    def validate_numeroLicencia(self, value):
+        sms = 'El campo numero Licencia debe tener una longitd de hasta 10 caracteres.'
+        validarLongitudMaxima(value, 10, sms)
+        return value
+
     def validate_ci(self, value):
         sms = 'El campo Carnet identidad de tener 11 digitos.'
         validarLongitud(value,11,sms)
@@ -561,6 +574,16 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
     def validate_fk_modalidad(self, value):
         sms = 'El campo Actividad a ejercer es requerido.'
         validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_codigoIdentificadorFiscal(self, value):
+        sms = 'El campo numero Identificacion FIscal debe tener una longitd de hasta 7 caracteres.'
+        validarLongitudMaxima(value, 7, sms)
+        return value
+
+    def validate_folio(self, value):
+        sms = 'El campo numero Folio debe tener una longitd de hasta 16 caracteres.'
+        validarLongitudMaxima(value, 16, sms)
         return value
 
     def validate_nit(self, value):
@@ -584,12 +607,12 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-    def validate_sucursal(self, value):
-        sms = 'El campo Sucursal es requerido.'
-        validarNoNuloOvacio(value, sms)
-        sms = 'El campo Sucursal solo acepta valores numericos.'
-        validarSoloNumeros(value, sms)
-        return value
+    # def validate_sucursal(self, value):
+    #     sms = 'El campo Sucursal es requerido.'
+    #     validarNoNuloOvacio(value, sms)
+    #     sms = 'El campo Sucursal solo acepta valores numericos.'
+    #     validarSoloNumeros(value, sms)
+    #     return value
 
     def validate_estado(self, value):
         sms = 'El campo Estado es requerido.'

@@ -33,11 +33,17 @@ def validarSoloNumerosYletras(value, sms):
         raise serializers.ValidationError([sms])
     return value
 
-# FUNCION PARA VALIDAR SEL CI
+# FUNCION PARA VALIDAR QUE LA LONGITUD SEA IGUAL A UN VALOR
 def validarLongitud(value, longitud, sms):
+    if str(value).__len__() != longitud:
+        raise serializers.ValidationError([sms])
+    return value
+
+# FUNCION PARA VALIDAR QUE LA LONGITUD SEA IGUAL O MENOR A UN VALOR
+def validarLongitudMaxima(value, longitud, sms):
     p = re.compile(u"\d+$")
     m = p.match(str(value))
-    if str(value).__len__() != longitud:
+    if str(value).__len__() <= longitud:
         raise serializers.ValidationError([sms])
     return value
 
