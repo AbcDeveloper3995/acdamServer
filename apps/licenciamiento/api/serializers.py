@@ -228,8 +228,8 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         return value
 
     def validate_codigoREEUP(self, value):
-        sms = 'El campo Codigo REEUP solo acepta valores numericos.'
-        validarSoloNumeros(value, sms)
+        sms = 'Entrada no valida en REEUP.'
+        validarEntradaReeupUonei(value, sms)
         sms = 'El campo Codigo REEUP debe tener una longitd de hasta 10 caracteres.'
         validarLongitudMaxima(value, 10, sms)
         return value
@@ -249,8 +249,9 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
         return value
 
     def validate_titular(self, value):
-        sms = 'El campo Titular solo acepta valores alfabeticos.'
-        validarSoloLetras(value, sms)
+        if value:
+            sms = 'El campo Titular solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
         return value
 
     def validate_banco(self, value):
@@ -419,8 +420,8 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
         return value
 
     def validate_codigoOnei(self, value):
-        sms = 'El campo Codigo ONEI solo acepta valores numericos.'
-        validarSoloNumeros(value, sms)
+        sms = 'Entrada no valida en Codigo ONEI.'
+        validarEntradaReeupUonei(value, sms)
         sms = 'El campo Codigo ONEI debe tener una longitd de hasta 10 caracteres.'
         validarLongitudMaxima(value, 10, sms)
         return value

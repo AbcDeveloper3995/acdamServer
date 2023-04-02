@@ -57,7 +57,7 @@ def getFechaExpiracion(anos):
 
 #FUNCION PARA OBTENER LA DESCRIPCION DE LA PERIOCIDAD DE ENTREGA
 def getDescripcionPeriocidadEntrega(value):
-    if value == 1:
+    if value == '1':
         return 'Trimestral musica viva'
     else:
         return 'Bianual musica grabada'

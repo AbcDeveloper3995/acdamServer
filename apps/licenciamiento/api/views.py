@@ -607,7 +607,13 @@ class anexo71MusicaViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Anexo musica eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo musica no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
-#API DE ANEXO71MUSICA
+    @action(detail=True, methods=['get'], url_path='getAnexosDeUnContrato')
+    def getAnexosDeUnContrato(self, request, *args, **kwargs):
+        anexos = Anexo71Musica.objects.filter(fk_contratoLicenciaEstatal__pk=self.kwargs['pk'])
+        serializer = self.list_serializer_class(anexos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+#API DE ANEXO71AUDIOVISUAL
 class anexo71AudiovisualViewSet(viewsets.ModelViewSet):
     serializer_class = anexo71AudiovisualSerializer
     list_serializer_class = anexo71AudiovisualListarSerializer
@@ -653,6 +659,12 @@ class anexo71AudiovisualViewSet(viewsets.ModelViewSet):
             anexo71Audiovisual.delete()
             return Response({'message': 'Anexo audiovisual eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo audiovisual no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='getAnexosDeUnContrato')
+    def getAnexosDeUnContrato(self, request, *args, **kwargs):
+        anexos = Anexo71AudioVisual.objects.filter(fk_contratoLicenciaEstatal__pk=self.kwargs['pk'])
+        serializer = self.list_serializer_class(anexos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 #API DE ANEXO72CIMEX
 class anexo72CimexViewSet(viewsets.ModelViewSet):
@@ -701,6 +713,12 @@ class anexo72CimexViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Anexo cimex eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo cimex no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'], url_path='getAnexosDeUnContrato')
+    def getAnexosDeUnContrato(self, request, *args, **kwargs):
+        anexos = Anexo72Cimex.objects.filter(fk_contratoLicenciaEstatal__pk=self.kwargs['pk'])
+        serializer = self.list_serializer_class(anexos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 #API DE ANEXO72GAVIOTA
 class anexo72GaviotaViewSet(viewsets.ModelViewSet):
     serializer_class = anexo72GaviotaSerializer
@@ -748,6 +766,12 @@ class anexo72GaviotaViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Anexo gaviota eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo gaviota no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'], url_path='getAnexosDeUnContrato')
+    def getAnexosDeUnContrato(self, request, *args, **kwargs):
+        anexos = Anexo72Gaviota.objects.filter(fk_contratoLicenciaEstatal__pk=self.kwargs['pk'])
+        serializer = self.list_serializer_class(anexos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 #API DE ANEXO72TRD
 class anexo72TrdViewSet(viewsets.ModelViewSet):
     serializer_class = anexo72TrdSerializer
@@ -794,6 +818,12 @@ class anexo72TrdViewSet(viewsets.ModelViewSet):
             anexo72Trd.delete()
             return Response({'message': 'Anexo TRD eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Anexo TRD no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='getAnexosDeUnContrato')
+    def getAnexosDeUnContrato(self, request, *args, **kwargs):
+        anexos = Anexo72TRD.objects.filter(fk_contratoLicenciaEstatal__pk=self.kwargs['pk'])
+        serializer = self.list_serializer_class(anexos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 #API DE CONTRATO  MANDATO

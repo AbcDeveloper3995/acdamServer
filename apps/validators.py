@@ -33,6 +33,14 @@ def validarSoloNumerosYletras(value, sms):
         raise serializers.ValidationError([sms])
     return value
 
+# FUNCION PARA VALIDAR SOLO LOS CAMPOS ONEI Y REEUP
+def validarEntradaReeupUonei(value, sms):
+    p = re.compile(u"[.0-9 ]+$")
+    m = p.match(value)
+    if not m:
+        raise serializers.ValidationError([sms])
+    return value
+
 # FUNCION PARA VALIDAR QUE LA LONGITUD SEA IGUAL A UN VALOR
 def validarLongitud(value, longitud, sms):
     if str(value).__len__() != longitud:
@@ -43,7 +51,7 @@ def validarLongitud(value, longitud, sms):
 def validarLongitudMaxima(value, longitud, sms):
     p = re.compile(u"\d+$")
     m = p.match(str(value))
-    if str(value).__len__() <= longitud:
+    if str(value).__len__() >= longitud:
         raise serializers.ValidationError([sms])
     return value
 
