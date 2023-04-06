@@ -461,6 +461,7 @@ class contratoLicenciaPersonaJuridicaViewSet(viewsets.ModelViewSet):
             request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            Utilizador.objects.filter(pk=request.data['fk_utilizador']).update(tieneContrato=True)
             serializer.save()
             return Response({'message': 'Contrato creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -523,6 +524,7 @@ class contratoLicenciaPersonaNaturalViewSet(viewsets.ModelViewSet):
             request.data['fechaVecimiento'] = getFechaExpiracion(int(request.data['tiempoVigencia']))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            Utilizador.objects.filter(pk=request.data['fk_utilizador']).update(tieneContrato=True)
             serializer.save()
             return Response({'message': 'Contrato creado correctamente'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -932,3 +934,59 @@ class clasificadorProformaViewSet(viewsets.ModelViewSet):
     def paginado(self, request, *args, **kwargs):
         data = getElementosPaginados(self.kwargs['pk'], ClasificadorProforma, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
+
+
+#API DE SUPLEMENTO
+class suplementoViewSet(viewsets.ModelViewSet):
+    serializer_class = suplementoSerializer
+    list_serializer_class = suplementoListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.list_serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Suplemento creado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        sector = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(sector)
+        return Response({'message': 'Detalles del suplemento', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        if self.get_queryset(pk):
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Suplemento modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Suplemento no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        sector = self.get_queryset(pk)
+        if sector:
+            sector.delete()
+            return Response({'message': 'Suplemento eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Suplemento no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='getlastSuplemento')
+    def getlastSuplemento(self, request, *args, **kwargs):
+        print(self.kwargs['pk'])
+        print(Suplemento.objects.filter(fk_usuario__pk=self.kwargs['pk']))
+        contrato = list(Suplemento.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
+        serializer = suplementoListarSerializer(contrato)
+        return Response(serializer.data, status=status.HTTP_200_OK)

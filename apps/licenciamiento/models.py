@@ -370,3 +370,32 @@ class ClasificadorProforma(models.Model):
     def __str__(self):
         return f'Clasificador: {self.fk_proforma.nombre}--{self.tipo}.'
 
+
+class Suplemento(models.Model):
+    fk_usuario = models.ForeignKey(Usuario, verbose_name='Creado por', blank=True, null=True, on_delete=models.CASCADE)
+    fk_contratoLicenciaEstatal = models.ForeignKey(ContratoLicenciaEstatal, verbose_name='Contrato Estatal', blank=True, null=True, on_delete=models.CASCADE)
+    fk_contratoLicenciaPersonaJuridica = models.ForeignKey(ContratoLicenciaPersonaJuridica, verbose_name='Contrato Persona Juridica', blank=True, null=True, on_delete=models.CASCADE)
+    fk_contratoLicenciaPersonaNatural = models.ForeignKey(ContratoLicenciaPersonaNatural, verbose_name='Contrato Persona Natural', blank=True, null=True, on_delete=models.CASCADE)
+    fechaCreacion = models.DateField(verbose_name='Fecha en que se crea el suplemento', auto_now=True)
+    titulo = models.CharField(verbose_name='Titulo', max_length=255, blank=True, null=True)
+    codigo = models.IntegerField(verbose_name='Codigo', blank=True, null=True)
+    direccion = models.CharField(verbose_name='Direccion', max_length=255, blank=True, null=True)
+    cuentaBancaria = models.BigIntegerField(verbose_name='Cuenta Bancaria', unique=True, blank=True, null=True)
+    sucursal = models.CharField(verbose_name='Sucursal', max_length=150, blank=True, null=True)
+    nombreFirmanteContrato = models.CharField(verbose_name='Nombre de quien firma el contrato', max_length=150,
+                                              blank=True, null=True)
+    cargoFirmanteContrato = models.CharField(verbose_name='Cargo de quien firma el contrato', max_length=150,
+                                             blank=True, null=True)
+    resolucionFirmante = models.CharField(verbose_name='Resolucion del firmante', max_length=200, blank=True, null=True)
+    fechaResolucionFirmante = models.DateField(verbose_name='Fecha resolucion firmante', blank=True, null=True)
+    descripcion = models.TextField(verbose_name='Cuerpo del suplemento', blank=False, null=False)
+
+    class Meta:
+        db_table = 'Suplemento'
+        verbose_name = 'Suplemento'
+        verbose_name_plural = 'Suplementos'
+
+    def __str__(self):
+        return f'{self.titulo}.'
+
+

@@ -15,7 +15,8 @@ class sectorListarSerializer(serializers.ModelSerializer):
         return {
             'id': instance.id,
             'nombre': instance.nombre
-                }
+        }
+
 
 class sectorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +28,8 @@ class sectorSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-#SERIALIZADORES DE LA API MODALIDAD
+
+# SERIALIZADORES DE LA API MODALIDAD
 class modalidadListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modalidad
@@ -37,7 +39,8 @@ class modalidadListarSerializer(serializers.ModelSerializer):
         return {
             'id': instance.id,
             'nombre': instance.nombre
-                }
+        }
+
 
 class modalidadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,7 +52,8 @@ class modalidadSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-#SERIALIZADORES DE LA API MUNICIPIO
+
+# SERIALIZADORES DE LA API MUNICIPIO
 class municipioListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Municipio
@@ -59,14 +63,16 @@ class municipioListarSerializer(serializers.ModelSerializer):
         return {
             'id': instance['id'],
             'nombre': instance['nombre']
-                }
+        }
+
 
 class municipioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Municipio
         fields = '__all__'
 
-#SERIALIZADORES DE LA API UTILIZADOR
+
+# SERIALIZADORES DE LA API UTILIZADOR
 class utilizadorListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilizador
@@ -81,7 +87,8 @@ class utilizadorListarSerializer(serializers.ModelSerializer):
             'tipoNoEstatal': instance.tipoNoEstatal,
             'tipoDerecho': instance.tipoDerecho,
             'tieneContrato': instance.tieneContrato,
-                }
+        }
+
 
 class utilizadorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,7 +110,8 @@ class utilizadorSerializer(serializers.ModelSerializer):
         validarNoNuloOvacio(value, sms)
         return value
 
-#SERIALIZADORES DE LA API REPRESENTANTE
+
+# SERIALIZADORES DE LA API REPRESENTANTE
 class representanteListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Representante
@@ -113,6 +121,7 @@ class representanteListarSerializer(serializers.ModelSerializer):
     FUNCION PARA RECORRER TODOS LOS ELEMENTOS DE UN CAMPO MANYTOMANY DE LA INSTANCIA Y ASIGNARLOS A UNA LISTA
     ejemplo: (recorrer todos los municipios que atiende un representante; municipio es el campo MTM) 
     '''
+
     def recorridoMTM(self, campo):
         aux = []
         for i in campo.all():
@@ -147,7 +156,8 @@ class representanteListarSerializer(serializers.ModelSerializer):
             'codigo': instance.codigo,
             'email': instance.email,
             'tieneContrato': instance.verificarSiTieneContrato()
-                }
+        }
+
 
 class representanteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -161,7 +171,7 @@ class representanteSerializer(serializers.ModelSerializer):
 
     def validate_ci(self, value):
         sms = 'El campo Carnet identidad de tener 11 digitos.'
-        validarLongitud(value,11,sms)
+        validarLongitud(value, 11, sms)
         sms = 'El campo Carnet identidad debe ser mayor a 0.'
         validarMayorQue0(value, sms)
         return value
@@ -171,7 +181,8 @@ class representanteSerializer(serializers.ModelSerializer):
         validarSoloLetras(value, sms)
         return value
 
-#SERIALIZADORES DE CONTRATO LICENCIA ESTATAL
+
+# SERIALIZADORES DE CONTRATO LICENCIA ESTATAL
 class contratoLicEstatalListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaEstatal
@@ -181,7 +192,8 @@ class contratoLicEstatalListarSerializer(serializers.ModelSerializer):
         return {
             'id': instance.id,
             'fk_utilizador': instance.fk_utilizador.nombre,
-                }
+        }
+
 
 class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -338,9 +350,10 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
             'fechaResolucionFirmante': instance.fechaResolucionFirmante,
             'emitido': instance.emitido,
             'estadoVigencia': instance.estadoVigencia,
-                }
+        }
 
-#SERIALIZADORES DE PROFORMA
+
+# SERIALIZADORES DE PROFORMA
 class proformaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proforma
@@ -361,6 +374,7 @@ class proformaSerializer(serializers.ModelSerializer):
         validarNoNuloOvacio(value, sms)
         return value
 
+
 class proformaListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proforma
@@ -373,9 +387,10 @@ class proformaListarSerializer(serializers.ModelSerializer):
             'titulo': instance.titulo,
             'nombre': instance.nombre,
             'tipo': instance.tipo,
-                }
+        }
 
-#SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA JURIDICA
+
+# SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA JURIDICA
 class contratoLicenciaPersonaJuridicaListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaPersonaJuridica
@@ -385,7 +400,8 @@ class contratoLicenciaPersonaJuridicaListarSerializer(serializers.ModelSerialize
         return {
             'id': instance.id,
             'fk_utilizador': instance.fk_utilizador.nombre
-                }
+        }
+
 
 class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -503,7 +519,6 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             return instante.fk_municipioComercial.nombre
         return ''
 
-
     def getActividadComercial(self, instante):
         if not instante.fk_modalidad == None:
             return instante.fk_modalidad.nombre
@@ -511,6 +526,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'id': instance.id,
             'fechaCreacionContrato': instance.fechaCreacionContrato,
             'titulo': instance.fk_proforma.titulo,
             'encabezado': instance.fk_proforma.encabezado,
@@ -538,7 +554,8 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'resolucionFirmante': instance.resolucionFirmante,
             'fechaResolucionFirmante': instance.fechaResolucionFirmante,
             'nombreComercial': instance.nombreComercial if instance.nombreComercial != None or instance.nombreComercial != '' else '________',
-            'provinciaComercial': formatoLargoProvincia(instance.provinciaComercial) if instance.provinciaComercial != None or instance.provinciaComercial != '' else '________',
+            'provinciaComercial': formatoLargoProvincia(
+                instance.provinciaComercial) if instance.provinciaComercial != None or instance.provinciaComercial != '' else '________',
             'fk_municipioComercial': self.getMunicipioComercial(instance),
             'direccionComercial': instance.direccionComercial,
             'actividadComercial': self.getActividadComercial(instance),
@@ -547,9 +564,11 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,
             'representacionObrasEscenicas': 'Si' if instance.representacionObrasEscenicas else 'No',
             'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
-            }
+            'estadoVigencia': instance.estadoVigencia,
+        }
 
-#SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA NATURAL
+
+# SERIALIZADORES DE CONTRATO LICENCIA NO ESTATAL PERSONA NATURAL
 class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoLicenciaPersonaNatural
@@ -562,7 +581,7 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
 
     def validate_ci(self, value):
         sms = 'El campo Carnet identidad de tener 11 digitos.'
-        validarLongitud(value,11,sms)
+        validarLongitud(value, 11, sms)
         sms = 'El campo Carnet identidad debe ser mayor a 0.'
         validarMayorQue0(value, sms)
         return value
@@ -687,10 +706,11 @@ class contratoLicenciaPersonaNaturalSerializer(serializers.ModelSerializer):
             'ejecucionObrasComercial': instance.ejecucionObrasComercial,
             'representacionObrasEscenicas': 'Si' if instance.representacionObrasEscenicas else 'No',
             'comunicacionObrasAudioVisuales': 'Si' if instance.comunicacionObrasAudioVisuales else 'No',
-            }
+            'estadoVigencia': instance.estadoVigencia,
+        }
 
 
-#SERIALIZADORES DE Anexo71Musica
+# SERIALIZADORES DE Anexo71Musica
 class anexo71MusicaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo71Musica
@@ -705,6 +725,7 @@ class anexo71MusicaSerializer(serializers.ModelSerializer):
         sms = 'Tarifa no valida.'
         validarTarifaAnexos(value, sms)
         return value
+
 
 class anexo71MusicaListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -727,9 +748,10 @@ class anexo71MusicaListarSerializer(serializers.ModelSerializer):
             'tipoMusica': instance.tipoMusica,
             'modalidad': instance.modalidad,
             'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
-                }
+        }
 
-#SERIALIZADORES DE Anexo71Audiovisual
+
+# SERIALIZADORES DE Anexo71Audiovisual
 class anexo71AudiovisualSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo71AudioVisual
@@ -744,6 +766,7 @@ class anexo71AudiovisualSerializer(serializers.ModelSerializer):
         sms = 'Tarifa no valida.'
         validarTarifaAnexos(value, sms)
         return value
+
 
 class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -765,9 +788,10 @@ class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
             'periocidadPago': instance.periocidadPago,
             'categoriaAudiovisual': instance.categoriaAudiovisual,
             'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
-                }
+        }
 
-#SERIALIZADORES DE Anexo72CIMEX
+
+# SERIALIZADORES DE Anexo72CIMEX
 class anexo72CimexSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72Cimex
@@ -782,6 +806,7 @@ class anexo72CimexSerializer(serializers.ModelSerializer):
         sms = 'Tarifa no valida.'
         validarSoloNumeros(value, sms)
         return value
+
 
 class anexo72CimexListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -798,9 +823,10 @@ class anexo72CimexListarSerializer(serializers.ModelSerializer):
             'cantidadPlazas': instance.cantidadPlazas,
             'importe': instance.importe,
             'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
-                }
+        }
 
-#SERIALIZADORES DE Anexo72Gaviota
+
+# SERIALIZADORES DE Anexo72Gaviota
 class anexo72GaviotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72Gaviota
@@ -815,6 +841,7 @@ class anexo72GaviotaSerializer(serializers.ModelSerializer):
         sms = 'Tarifa no valida.'
         validarSoloNumeros(value, sms)
         return value
+
 
 class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -846,9 +873,10 @@ class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
             'importeTemporadaBaja': instance.importeTemporadaBaja,
             'importeTemporadaOcupacionInferior': instance.importeTemporadaOcupacionInferior,
             'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
-                }
+        }
 
-#SERIALIZADORES DE Anexo72TRD
+
+# SERIALIZADORES DE Anexo72TRD
 class anexo72TrdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anexo72TRD
@@ -858,6 +886,7 @@ class anexo72TrdSerializer(serializers.ModelSerializer):
         sms = 'El campo Locacion solo debe contener valores aflabeticos.'
         validarSoloLetras(value, sms)
         return value
+
 
 class anexo72TrdListarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -874,10 +903,10 @@ class anexo72TrdListarSerializer(serializers.ModelSerializer):
             'importe': instance.importe,
             'modalidad': instance.modalidad,
             'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
-                }
+        }
 
 
-#SERIALIZADORES DE CONTRATO MANDATO
+# SERIALIZADORES DE CONTRATO MANDATO
 class contratoMandatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoMandatoRepresentante
@@ -903,6 +932,7 @@ class contratoMandatoSerializer(serializers.ModelSerializer):
         validarFechaMenorAfechaActual(value, sms)
         return value
 
+
 class contratoMandatoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoMandatoRepresentante
@@ -927,10 +957,10 @@ class contratoMandatoListarSerializer(serializers.ModelSerializer):
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
             'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
-                }
+        }
 
 
-#SERIALIZADORES DE CLASIFICADOR PROFORMA
+# SERIALIZADORES DE CLASIFICADOR PROFORMA
 class clasificadorProformaSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClasificadorProforma
@@ -956,6 +986,7 @@ class clasificadorProformaSerializer(serializers.ModelSerializer):
         validarNoNuloOvacio(value, sms)
         return value
 
+
 class clasificadorProformaListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClasificadorProforma
@@ -978,4 +1009,199 @@ class clasificadorProformaListarSerializer(serializers.ModelSerializer):
             'fk_sector': self.getSector(instance),
             'tipo': 'Estatal' if instance.tipo == '1' else 'No estatal',
             'tipoDerecho': self.getTipoDerecho(instance),
-                }
+        }
+
+
+# SERIALIZADORES DE SUPLEMENTO
+class suplementoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Suplemento
+        fields = '__all__'
+
+    def validate_titulo(self, value):
+        sms = 'El campo Titulo es requerido.'
+        validarNoNuloOvacio(value, sms)
+        return value
+
+    def validate_cuentaBancaria(self, value):
+        if value != None:
+            sms = 'El campo Cuenta corriente debe tener 16 digitos.'
+            validarLongitud(value, 16, sms)
+            sms = 'El campo Cuenta corriente debe ser mayor a 0.'
+            validarMayorQue0(value, sms)
+            return value
+        return value
+
+    def validate_nombreFirmanteContrato(self, value):
+        if value:
+            sms = 'El campo Nombre del firmante solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
+            return value
+        return ''
+
+    def validate_cargoFirmanteContrato(self, value):
+        if value:
+            sms = 'El campo Cargo del firmante solo acepta valores alfabeticos.'
+            validarSoloLetras(value, sms)
+            return value
+        return ''
+
+    def validate_resolucionFirmante(self, value):
+        if value:
+            sms = 'El campo Segun consta es requerido.'
+            validarNoNuloOvacio(value, sms)
+            sms = 'El campo Segun consta por solo acepta valores alfanumericos.'
+            validarSoloNumerosYletras(value, sms)
+            return value
+        return ''
+
+    def validate_fechaResolucionFirmante(self, value):
+        if value:
+            sms = 'El campo Fecha resolucion firmante no puede ser mayor a la fecha actual.'
+            validarFechaMenorAfechaActual(value, sms)
+            return value
+        return value
+
+
+class suplementoListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Suplemento
+        fields = '__all__'
+
+    ''' Este conjunto de funciones es para ir formando la descripcion que se va a retornar como descripcionUtilizador;
+    si algunos de los campos es cambiado al crear el suplemento, ejemplo se cambio la cuenta bancaria entonces la funcion correspondiente
+    (getCuentaBancaria) retornara la cuenta que se ingreso al crear el suplemento, sino retornara la cuenta bancaria que tenga el contrato y
+    sera en funcion de la (fk) que llegue ya sea Estatal, No estatal juridico o No estatal personal
+    '''
+
+    def getEncabezadoSegunContrato(self, instance):
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.fk_proforma.encabezado
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.fk_proforma.encabezado
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.fk_proforma.encabezado
+
+    def getCuentaBancaria(self, instance):
+        if instance.cuentaBancaria != '' and instance.cuentaBancaria != None:
+            return instance.cuentaBancaria
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.cuentaBancaria
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.cuentaCorriente
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.cuentaCorriente
+
+    def getDireccion(self, instance):
+        if instance.direccion != '' and instance.direccion != None:
+            return instance.direccion
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.direccion
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.direccion
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.direccion
+
+    def getSucursal(self, instance):
+        if instance.sucursal != '' and instance.sucursal != None:
+            return instance.sucursal
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.sucursal
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.sucursal
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.sucursal
+
+    def getNombreFirmante(self, instance):
+        if instance.nombreFirmanteContrato != '' and instance.nombreFirmanteContrato != None:
+            return instance.nombreFirmanteContrato
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.nombreFirmanteContrato
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.nombreFirmanteContrato
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.fk_utilizador.nombre
+
+    def getCargoFirmante(self, instance):
+        if instance.cargoFirmanteContrato != '' and instance.cargoFirmanteContrato != None:
+            return instance.cargoFirmanteContrato
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.cargoFirmanteContrato
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.cargoFirmanteContrato
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return ''
+
+    def getResolucionFirmante(self, instance):
+        if instance.resolucionFirmante != '' and instance.resolucionFirmante != None:
+            return instance.resolucionFirmante
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.resolucionFirmante
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.resolucionFirmante
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.resolucionFirmante
+
+    def getFechaResolucionFirmante(self, instance):
+        fecha = instance.fechaResolucionFirmante
+        if instance.fechaResolucionFirmante != '' and instance.fechaResolucionFirmante != None:
+            return fecha
+        if not instance.fk_contratoLicenciaEstatal == None:
+            return instance.fk_contratoLicenciaEstatal.fechaResolucionFirmante
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            return instance.fk_contratoLicenciaPersonaJuridica.fechaResolucionFirmante
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            return instance.fk_contratoLicenciaPersonaNatural.fechaResolucionFirmante
+
+    ''' Aca se va a retornar una descripcion en dependencia de la (fk) que llegue, ya sea (Estatal, No estatal Juridico, No estatal Natural) 
+        '''
+
+    def getDescripcionUtilizador(self, instance):
+        if not instance.fk_contratoLicenciaEstatal == None:
+            descripcion = f'DE OTRA PARTE: {instance.fk_contratoLicenciaEstatal.fk_utilizador.nombre}, con domicilio legal en ' \
+                          f'{self.getDireccion(instance)}, el la provincia {instance.fk_contratoLicenciaEstatal.provincia},' \
+                          f' municipio {instance.fk_contratoLicenciaEstatal.fk_municipio.nombre}, con Codigo REEUP: {instance.fk_contratoLicenciaEstatal.codigoREEUP}, NIT: ' \
+                          f'{instance.fk_contratoLicenciaEstatal.nit}, Cuenta Bancaria en CUP No {self.getCuentaBancaria(instance)}, ' \
+                          f'en el Banco de Credito y Comercio {instance.fk_contratoLicenciaEstatal.banco}, Sucursal ' \
+                          f'{self.getSucursal(instance)}, que en lo adelante se le denominara, a los efectos de este contrato, UTILIZADOR, ' \
+                          f'representado en este acto por {self.getNombreFirmante(instance)}, en su caracter de ' \
+                          f'{self.getCargoFirmante(instance)}, designado en este cargo por la Resolucion ' \
+                          f'{self.getResolucionFirmante(instance)}, de fecha {self.getFechaResolucionFirmante(instance)}, ' \
+                          f'emitida por {instance.fk_contratoLicenciaEstatal.emitido}.'
+
+            return descripcion
+        if not instance.fk_contratoLicenciaPersonaJuridica == None:
+            descripcion = f'DE OTRA PARTE: {instance.fk_contratoLicenciaPersonaJuridica.fk_utilizador.nombre}, con domicilio legal en ' \
+                          f'{self.getDireccion(instance)}, el la provincia {instance.fk_contratoLicenciaPersonaJuridica.provincia},' \
+                          f' municipio {instance.fk_contratoLicenciaPersonaJuridica.fk_municipio.nombre}, con Codigo ONEI: {instance.fk_contratoLicenciaPersonaJuridica.codigoOnei}, NIT: ' \
+                          f'{instance.fk_contratoLicenciaPersonaJuridica.nit}, Cuenta Bancaria en CUP No {self.getCuentaBancaria(instance)}, ' \
+                          f'en el Banco de Credito y Comercio {instance.fk_contratoLicenciaPersonaJuridica.banco}, Sucursal ' \
+                          f'{self.getSucursal(instance)}, que en lo adelante se le denominara, a los efectos de este contrato, UTILIZADOR, ' \
+                          f'representado en este acto por {self.getNombreFirmante(instance)}, en su caracter de ' \
+                          f'{self.getCargoFirmante(instance)}, designado en este cargo por la Resolucion ' \
+                          f'{self.getResolucionFirmante(instance)}, de fecha {self.getFechaResolucionFirmante(instance)}, ' \
+                          f'emitida por {instance.fk_contratoLicenciaPersonaJuridica.emitido}.'
+
+            return descripcion
+        if not instance.fk_contratoLicenciaPersonaNatural == None:
+            descripcion = f'DE OTRA PARTE: El trabajador por cuenta propia {instance.fk_contratoLicenciaPersonaNatural.fk_utilizador.nombre}, ' \
+                          f'con numero de identidad permanente {instance.fk_contratoLicenciaPersonaNatural.ci} con domicilio legal en ' \
+                          f'{self.getDireccion(instance)}, el la provincia {instance.fk_contratoLicenciaPersonaNatural.provincia},' \
+                          f' municipio {instance.fk_contratoLicenciaPersonaNatural.fk_municipio.nombre}, autorizador a ejercer el trabajo por cuenta ' \
+                          f'propia en la actividad {instance.fk_contratoLicenciaPersonaNatural.fk_modalidad.nombre}, con identificacion Fiscal Unica ' \
+                          f'RC - 05, con numeracion {instance.fk_contratoLicenciaPersonaNatural.codigoIdentificadorFiscal}, NIT: ' \
+                          f'{instance.fk_contratoLicenciaPersonaNatural.nit}, Cuenta Bancaria en CUP No {self.getCuentaBancaria(instance)}, ' \
+                          f'en el Banco de Credito y Comercio {instance.fk_contratoLicenciaPersonaNatural.banco}, Sucursal ' \
+                          f'{self.getSucursal(instance)}, que en lo adelante se le denominara, a los efectos de este contrato, UTILIZADOR.'
+            return descripcion
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.pk,
+            'titulo': instance.titulo,
+            'encabezado': self.getEncabezadoSegunContrato(instance),
+            'utilizador': self.getDescripcionUtilizador(instance),
+            'descripcion': instance.descripcion,
+            'cargoFirmanteSuplemento': self.getCargoFirmante(instance),
+            'firmanteSuplemento': self.getNombreFirmante(instance),
+        }
