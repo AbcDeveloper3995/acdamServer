@@ -171,7 +171,8 @@ class ContratoMandatoRepresentante(models.Model):
     tipoActividad = models.CharField(verbose_name='Tipo de actividad', choices=CHOICE_ACTIVIDAD, max_length=50, blank=False, null=False)
     numeroLicencia = models.PositiveIntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
     numeroContrato = models.PositiveIntegerField(verbose_name='Numero de Contrato', unique=True, blank=True, null=True)
-    remuneracion = models.IntegerField(verbose_name='Remuneracion', blank=True, null=True)
+    remuneracion = models.IntegerField(verbose_name='Remuneracion estatal', blank=True, null=True)
+    remuneracionNoEstatal = models.IntegerField(verbose_name='Remuneracion no estatal', blank=True, null=True)
 
     class Meta:
         db_table = 'ContratoMandatoRepresentante'

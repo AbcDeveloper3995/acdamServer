@@ -33,8 +33,8 @@ CHOICE_ESTADO = (
 )
 
 CHOICE_ACTIVIDAD = (
-    (1, 'Gestor de cobro y pago de derecho de autor'),
-    (2, 'Cobrador pagador del derecho de autor')
+    ('1', 'Gestor de cobro y pago de derecho de autor'),
+    ('2', 'Cobrador pagador del derecho de autor')
 )
 
 CHOICE_PROVINCIA = (

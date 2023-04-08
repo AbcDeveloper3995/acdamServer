@@ -378,6 +378,32 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
         serializer = contratoLicenciaEstatalSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['get'], url_path='getAnexos')
+    def getAnexos(self, request, *args, **kwargs):
+        data = {}
+        parametros = str(self.kwargs['pk']).split('-')
+        id = int(parametros[0])
+        resolucion = int(parametros[1])
+        if resolucion == 71:
+            anexos = Anexo71Musica.objects.filter(fk_contratoLicenciaEstatal__pk=id)
+            if anexos.exists():
+                data['indicador'] = 1
+            else:
+                data['indicador'] = 2
+        elif resolucion == 72:
+            anexosCimex = Anexo72Cimex.objects.filter(fk_contratoLicenciaEstatal__pk=id)
+            anexosGaviota = Anexo72Gaviota.objects.filter(fk_contratoLicenciaEstatal__pk=id)
+            anexosTRD = Anexo72TRD.objects.filter(fk_contratoLicenciaEstatal__pk=id)
+            if anexosCimex.exists():
+                data['indicador'] = 3
+            if anexosGaviota.exists():
+                data['indicador'] = 4
+            if anexosTRD.exists():
+                data['indicador'] = 5
+        else:
+            data['indicador'] = 6
+        return Response(data, status=status.HTTP_200_OK)
+
 #API DE PROFORMA
 class proformaViewSet(viewsets.ModelViewSet):
     serializer_class = proformaSerializer
