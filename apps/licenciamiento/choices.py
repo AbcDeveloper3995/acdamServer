@@ -103,3 +103,9 @@ CHOICE_VIGENCIA = (
     (2, 'Por Vencer'),
     (3, 'Expirado')
 )
+
+CHOICE_CREDITO = (
+    (1, 'Estatal'),
+    (2, 'No Estatal'),
+    (3, 'BFI')
+)

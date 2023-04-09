@@ -1,7 +1,5 @@
-from rest_framework import serializers
-
 from apps.licenciamiento.models import *
-from apps.utils import formatoLargoProvincia, getFechaExpiracion, getDescripcionPeriocidadEntrega
+from apps.utils import formatoLargoProvincia, getDescripcionPeriocidadEntrega
 from apps.validators import *
 
 
@@ -17,14 +15,13 @@ class sectorListarSerializer(serializers.ModelSerializer):
             'nombre': instance.nombre
         }
 
-
 class sectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sector
         fields = '__all__'
 
     def validate_nombre(self, value):
-        sms = 'El campo Nombre solo acepta valores alfanumericos.'
+        sms = 'El campo Nombre solo acepta valores alfabeticos.'
         validarSoloLetras(value, sms)
         return value
 
@@ -40,7 +37,6 @@ class modalidadListarSerializer(serializers.ModelSerializer):
             'id': instance.id,
             'nombre': instance.nombre
         }
-
 
 class modalidadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,7 +61,6 @@ class municipioListarSerializer(serializers.ModelSerializer):
             'nombre': instance['nombre']
         }
 
-
 class municipioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Municipio
@@ -88,7 +83,6 @@ class utilizadorListarSerializer(serializers.ModelSerializer):
             'tipoDerecho': instance.tipoDerecho,
             'tieneContrato': instance.tieneContrato,
         }
-
 
 class utilizadorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -157,7 +151,6 @@ class representanteListarSerializer(serializers.ModelSerializer):
             'email': instance.email,
             'tieneContrato': instance.verificarSiTieneContrato()
         }
-
 
 class representanteSerializer(serializers.ModelSerializer):
     class Meta:

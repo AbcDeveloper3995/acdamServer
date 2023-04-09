@@ -67,14 +67,6 @@ class Resolucion(Base):
     def __str__(self):
         return f'Resolucion: {self.nombre}.'
 
-class Concepto(Base):
-    class Meta:
-        db_table = 'Concepto'
-        verbose_name = 'Conceptos'
-        verbose_name_plural = 'Conceptos'
-
-    def __str__(self):
-        return f'Concepto: {self.nombre}.'
 
 class Sector(Base):
     class Meta:
@@ -119,7 +111,6 @@ class Utilizador(models.Model):
         verbose_name = 'Utilizadores'
         verbose_name_plural = 'Utilizadores'
 
-
     def __str__(self):
         return f'Utilizador: {self.nombre} del sector {self.fk_sector.nombre} con derecho {self.tipoDerecho}.'
 
@@ -137,7 +128,7 @@ class Representante(models.Model):
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=False, null=False)
     nivelEscolaridad = models.CharField(verbose_name='Nivel de escolaridad', choices=CHOICE_NIVEL_ESCOLARIDAD, max_length=150, blank=False, null=False)
     codigo = models.PositiveIntegerField(verbose_name='Codigo', unique=True,  blank=False, null=False)
-    email = models.CharField(verbose_name='Correo', max_length=50, blank=True, null=True)
+    email = models.EmailField(verbose_name='Correo', max_length=50, blank=True, null=True)
     esActivo = models.BooleanField(default=True)
 
     class Meta:

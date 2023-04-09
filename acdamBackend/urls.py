@@ -37,6 +37,7 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('usuario/', include('apps.usuario.api.routers')),
     path('licenciamiento/', include('apps.licenciamiento.api.routers')),
+    path('recaudacion/', include('apps.recaudacion.api.routers')),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
