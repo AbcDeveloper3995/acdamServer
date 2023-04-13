@@ -738,10 +738,8 @@ class anexo71MusicaListarSerializer(serializers.ModelSerializer):
             'fk_contratoLicenciaPersonaJ': self.getJuridico(instance),
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
-            'periocidadPago': instance.periocidadPago,
             'tipoMusica': instance.tipoMusica,
             'modalidad': instance.modalidad,
-            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
         }
 
 
@@ -779,9 +777,7 @@ class anexo71AudiovisualListarSerializer(serializers.ModelSerializer):
             'fk_contratoLicenciaPersonaJ': self.getJuridico(instance),
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
-            'periocidadPago': instance.periocidadPago,
             'categoriaAudiovisual': instance.categoriaAudiovisual,
-            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
         }
 
 
@@ -813,10 +809,8 @@ class anexo72CimexListarSerializer(serializers.ModelSerializer):
             'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
             'locacionModalidad': instance.locacionModalidad,
             'tarifa': instance.tarifa,
-            'periocidadPago': instance.periocidadPago,
             'cantidadPlazas': instance.cantidadPlazas,
             'importe': instance.importe,
-            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega)
         }
 
 
@@ -859,14 +853,12 @@ class anexo72GaviotaListarSerializer(serializers.ModelSerializer):
             'categoria': self.getFormatoCategorias(instance.categoria),
             'numeroHabitacion': instance.numeroHabitacion,
             'periodo': instance.periodo,
-            'periocidadPago': instance.periocidadPago,
             'tarifaTemporadaAlta': instance.tarifaTemporadaAlta,
             'tarifaTemporadaBaja': instance.tarifaTemporadaBaja,
             'tarifaOcupacionInferior': instance.tarifaOcupacionInferior,
             'importeTemporadaAlta': instance.importeTemporadaAlta,
             'importeTemporadaBaja': instance.importeTemporadaBaja,
             'importeTemporadaOcupacionInferior': instance.importeTemporadaOcupacionInferior,
-            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
         }
 
 
@@ -893,10 +885,8 @@ class anexo72TrdListarSerializer(serializers.ModelSerializer):
             'fk_contratoLicenciaEstatal': instance.fk_contratoLicenciaEstatal.id,
             'locacion': instance.locacion,
             'tarifa': instance.tarifa,
-            'periocidadPago': instance.periocidadPago,
             'importe': instance.importe,
             'modalidad': instance.modalidad,
-            'periocidadEntrega': getDescripcionPeriocidadEntrega(instance.periocidadEntrega),
         }
 
 

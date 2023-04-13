@@ -37,8 +37,8 @@ class ContratoLicenciaBase(models.Model):
 
 class Anexo72Base(models.Model):
     fk_contratoLicenciaEstatal = models.ForeignKey('ContratoLicenciaEstatal', verbose_name='Contrato licencia estatal al cual se vincula', blank=True, null=True, on_delete=models.CASCADE)
-    periocidadPago = models.CharField(verbose_name='Periocidad de pago', choices=CHOICE_PERIOCIDAD_PAGO, max_length=50, blank=False, null=False)
-    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=False, null=False)
+    periocidadPago = models.CharField(verbose_name='Periocidad de pago', choices=CHOICE_PERIOCIDAD_PAGO, max_length=50, blank=True, null=True)
+    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -50,7 +50,7 @@ class Anexo71Base(models.Model):
     fk_contratoLicenciaPersonaJ = models.ForeignKey('ContratoLicenciaPersonaJuridica', verbose_name='Contrato licencia persona juridica al cual se vincula', blank=True, null=True, on_delete=models.CASCADE)
     locacion = models.CharField(verbose_name='Locacion', max_length=150, blank=False, null=False)
     tarifa = models.CharField(verbose_name='Tarifa', max_length=150, blank=False, null=False)
-    periocidadPago = models.CharField(verbose_name='Periocidad de pago', choices=CHOICE_PERIOCIDAD_PAGO, max_length=50, blank=False, null=False)
+    periocidadPago = models.CharField(verbose_name='Periocidad de pago', choices=CHOICE_PERIOCIDAD_PAGO, max_length=50, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -308,7 +308,7 @@ class Anexo72TRD(Anexo72Base):
 class Anexo71Musica(Anexo71Base):
     tipoMusica = models.CharField(verbose_name='Tipo musica', choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=150, blank=False, null=False)
     modalidad = models.CharField(verbose_name='Modalidad', max_length=150, blank=False, null=False)
-    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=False, null=False)
+    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=True, null=TrueS)
 
     class Meta:
         db_table = 'Anexo71Musica'
@@ -320,7 +320,7 @@ class Anexo71Musica(Anexo71Base):
 
 class Anexo71AudioVisual(Anexo71Base):
     categoriaAudiovisual = models.CharField(verbose_name='Categoria', choices=CHOICE_CATEGORIA_AUDIOVISUAL, max_length=150, blank=False, null=False)
-    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=False, null=False)
+    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'Anexo71AudioVisual'

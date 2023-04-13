@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.recaudacion.models import *
+from apps.utils import formatoLargoProvincia
 from apps.validators import validarSoloLetras
 
 # SERIALIZADORES DE LA API CONCEPTO
@@ -36,7 +37,7 @@ class sucursalListarSerializer(serializers.ModelSerializer):
             'id': instance.id,
             'codigo': instance.codigo,
             'fk_municipio': instance.fk_municipio.nombre,
-            'provincia': instance.provincia,
+            'provincia': formatoLargoProvincia(instance.provincia),
         }
 
 class sucursalSerializer(serializers.ModelSerializer):
@@ -72,6 +73,14 @@ class creditoListarSerializer(serializers.ModelSerializer):
         model = Credito
         fields = '__all__'
 
+    def getDescripcionTipo(self, tipo):
+        if tipo == 1:
+            return 'Estatal'
+        elif tipo == 2:
+            return 'No estatal'
+        else:
+            return 'BFI'
+
     def to_representation(self, instance):
         return {
             'id': instance.id,
@@ -83,7 +92,7 @@ class creditoListarSerializer(serializers.ModelSerializer):
             'cheque': instance.cheque,
             'factura': instance.factura,
             'devolucion': instance.devolucion,
-            'tipoEstatal': instance.tipoEstatal,
+            'tipoEstatal': self.getDescripcionTipo(instance.tipoEstatal),
         }
 
 class creditoSerializer(serializers.ModelSerializer):
