@@ -105,7 +105,9 @@ CHOICE_VIGENCIA = (
 )
 
 CHOICE_CREDITO = (
-    (1, 'Estatal'),
-    (2, 'No Estatal'),
-    (3, 'BFI')
+    (1, 'Metropolitano Estatal'),
+    (2, 'Metropolitano No Estatal'),
+    (3, 'BFI Estatal'),
+    (4, 'BFI No Estatal'),
+    (5, 'Sociedades')
 )

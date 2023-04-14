@@ -32,8 +32,8 @@ class Recaudacion(models.Model):
     fechaCreacion = models.DateField(verbose_name='Fecha en que se crea la recaudacion', unique=True, auto_now=True)
     fechaEstadoCuenta = models.DateField(verbose_name='Fecha Estado de Cuenta')
     numeroEstadoCuenta = models.PositiveIntegerField(verbose_name='Numero de estado de cuenta', unique=True, blank=True, null=True)
-    saldoAnterior = models.PositiveIntegerField(verbose_name='Saldo Anterior', blank=True, null=True)
-    saldoCierre = models.PositiveIntegerField(verbose_name='Saldo Cierre', blank=True, null=True)
+    saldoAnterior = models.DecimalField(verbose_name='Saldo Anterior', max_digits=11, decimal_places=2, blank=True, null=True)
+    saldoCierre = models.DecimalField(verbose_name='Saldo Cierre', max_digits=11, decimal_places=2, blank=True, null=True)
 
     class Meta:
         db_table = 'Recaudacion'
@@ -48,13 +48,16 @@ class Credito(models.Model):
     fk_recaudacion = models.ForeignKey(Recaudacion, verbose_name='Recaudacion', blank=True, null=True, on_delete=models.CASCADE)
     fk_utilizador = models.ForeignKey(Utilizador, verbose_name='Utilizador', blank=True, null=True, on_delete=models.CASCADE)
     fk_sucursal = models.ForeignKey(Sucursal, verbose_name='Sucursal', blank=True, null=True, on_delete=models.CASCADE)
+    importe = models.DecimalField(verbose_name='Importe', max_digits=11, decimal_places=2, blank=True, null=True)
     provincia = models.CharField(verbose_name='Provincia', max_length=50, blank=True, null=True)
     municipio = models.CharField(verbose_name='Municipio', max_length=150, blank=True, null=True)
     transferencia = models.CharField(verbose_name='Transferencia', max_length=150, blank=True, null=True)
     cheque = models.CharField(verbose_name='Cheque', max_length=150, blank=True, null=True)
     factura = models.PositiveIntegerField(verbose_name='Factura', blank=True, null=True)
-    devolucion = models.PositiveIntegerField(verbose_name='Factura', blank=True, null=True)
+    devolucion = models.DecimalField(verbose_name='Devolucion', max_digits=9, decimal_places=2, blank=True, null=True)
     tipoEstatal = models.PositiveIntegerField(verbose_name='Tipo estatal', choices=CHOICE_CREDITO, blank=False, null=False)
+    observacion = models.TextField(verbose_name='Observacion', blank=True, null=True)
+    pertenenciaACDAM = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'Credito'

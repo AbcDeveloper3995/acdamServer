@@ -872,7 +872,6 @@ class contratoMandatoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -907,6 +906,17 @@ class contratoMandatoViewSet(viewsets.ModelViewSet):
         contrato = list(ContratoMandatoRepresentante.objects.filter(fk_usuario__id=self.kwargs['pk'])).pop()
         serializer = contratoMandatoListarSerializer(contrato)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='completarContrato')
+    def completarContrato(self, request, *args, **kwargs):
+        contrato = self.get_queryset(request.data['pk'])
+        if request.data['numeroLicencia'] == None or request.data['fechaInscripcion'] == None or request.data['fechaLicencia'] ==None:
+            return Response({'message': 'Asegurese de no haber dejado ningun campo vacio.'}, status=status.HTTP_400_BAD_REQUEST)
+        contrato.numeroLicencia=request.data['numeroLicencia']
+        contrato.fechaInscripcion=request.data['fechaInscripcion']
+        contrato.fechaLicencia=request.data['fechaLicencia']
+        contrato.save()
+        return Response({'message': 'Contrato completado correctamente '}, status=status.HTTP_200_OK)
 
 
 #API DE CLASIFICADOR PROFORMA

@@ -907,13 +907,15 @@ class contratoMandatoSerializer(serializers.ModelSerializer):
         return value
 
     def validate_fechaInscripcion(self, value):
-        sms = 'El campo fecha de inscripcion no puede ser mayor a la fecha actual.'
-        validarFechaMenorAfechaActual(value, sms)
+        if not value == None:
+            sms = 'El campo fecha de inscripcion no puede ser mayor a la fecha actual.'
+            validarFechaMenorAfechaActual(value, sms)
         return value
 
     def validate_fechaLicencia(self, value):
-        sms = 'El campo fecha de licencia no puede ser mayor a la fecha actual.'
-        validarFechaMenorAfechaActual(value, sms)
+        if not value == None:
+            sms = 'El campo fecha de licencia no puede ser mayor a la fecha actual.'
+            validarFechaMenorAfechaActual(value, sms)
         return value
 
 
@@ -921,6 +923,13 @@ class contratoMandatoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoMandatoRepresentante
         fields = '__all__'
+
+    def recorridoMTM(self, campo):
+        aux = []
+        for i in campo.all():
+            data = {'id': i.id, 'nombre': i.nombre}
+            aux.append(data)
+        return aux
 
     def to_representation(self, instance):
         return {
@@ -942,6 +951,9 @@ class contratoMandatoListarSerializer(serializers.ModelSerializer):
             'encabezado': instance.fk_proforma.encabezado,
             'descripcion': instance.fk_proforma.descripcion,
             'descripcion2daParte': instance.fk_proforma.descripcion2daParte,
+            'fk_municipiosAtendidos': self.recorridoMTM(instance.fk_representante.fk_municipiosAtendidos),
+            'fk_utilizador': self.recorridoMTM(instance.fk_representante.fk_utilizador),
+            'fk_sector': self.recorridoMTM(instance.fk_representante.fk_sector),
         }
 
 

@@ -127,7 +127,7 @@ class Representante(models.Model):
     ci = models.BigIntegerField(verbose_name='CI', unique=True, blank=False, null=False)
     direccion = models.CharField(verbose_name='Direccion', max_length=150, blank=False, null=False)
     nivelEscolaridad = models.CharField(verbose_name='Nivel de escolaridad', choices=CHOICE_NIVEL_ESCOLARIDAD, max_length=150, blank=False, null=False)
-    codigo = models.PositiveIntegerField(verbose_name='Codigo', unique=True,  blank=False, null=False)
+    codigo = models.CharField(verbose_name='Codigo', max_length=5, blank=False, null=False)
     email = models.EmailField(verbose_name='Correo', max_length=50, blank=True, null=True)
     esActivo = models.BooleanField(default=True)
 
@@ -160,9 +160,9 @@ class ContratoMandatoRepresentante(models.Model):
     fechaLicencia = models.DateField(verbose_name='Fecha de Licencia', blank=True, null=True)
     fechaInscripcion = models.DateField(verbose_name='Fecha de Inscripcion', blank=True, null=True)
     tipoActividad = models.CharField(verbose_name='Tipo de actividad', choices=CHOICE_ACTIVIDAD, max_length=50, blank=False, null=False)
-    numeroLicencia = models.PositiveIntegerField(verbose_name='Numero de licencia', unique=True, blank=False, null=False)
+    numeroLicencia = models.PositiveIntegerField(verbose_name='Numero de licencia', unique=True, blank=True, null=True)
     numeroContrato = models.PositiveIntegerField(verbose_name='Numero de Contrato', unique=True, blank=True, null=True)
-    remuneracion = models.IntegerField(verbose_name='Remuneracion estatal', blank=True, null=True)
+    remuneracion = models.DecimalField(verbose_name='Remuneracion estatal', max_digits=7, decimal_places=2, blank=True, null=True)
     remuneracionNoEstatal = models.IntegerField(verbose_name='Remuneracion no estatal', blank=True, null=True)
 
     class Meta:
@@ -308,7 +308,7 @@ class Anexo72TRD(Anexo72Base):
 class Anexo71Musica(Anexo71Base):
     tipoMusica = models.CharField(verbose_name='Tipo musica', choices=CHOICE_TIPO_OBRA_COMERCIAL, max_length=150, blank=False, null=False)
     modalidad = models.CharField(verbose_name='Modalidad', max_length=150, blank=False, null=False)
-    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=True, null=TrueS)
+    periocidadEntrega = models.CharField(verbose_name='Periocidad de entrega', choices=CHOICE_PERIOCIDAD_ENTREGA, max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'Anexo71Musica'
