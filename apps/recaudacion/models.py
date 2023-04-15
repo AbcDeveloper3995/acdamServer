@@ -67,3 +67,21 @@ class Credito(models.Model):
 
     def __str__(self):
         return f'Credito: {self.fk_utilizador.nombre}.'
+
+class ResumenRecaudacionDiaria(models.Model):
+    fechaCreacion = models.DateField(verbose_name='Fecha de creacion', unique=True, auto_now=True)
+    totalMetropolitanoEstatal = models.DecimalField(verbose_name='Metropolitano estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    totalMetropolitanoNoEstatal = models.DecimalField(verbose_name='Metropolitano no estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    totalBfiEstatal = models.DecimalField(verbose_name='BFI estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    totalBfiNoEstatal = models.DecimalField(verbose_name='BFI no estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    totalSociedades = models.DecimalField(verbose_name='Sociedades', max_digits=11, decimal_places=2, blank=True, null=True)
+    totalGeneral = models.DecimalField(verbose_name='General', max_digits=11, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        db_table = 'ResumenRecaudacionDiaria'
+        verbose_name = 'ResumenRecaudacionDiaria'
+        verbose_name_plural = 'ResumenRecaudacionesDiarias'
+
+
+    def __str__(self):
+        return f'Resumen del dia: {self.fechaCreacion}.'

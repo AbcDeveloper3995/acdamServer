@@ -234,7 +234,7 @@ class contratoLicenciaEstatalSerializer(serializers.ModelSerializer):
 
     def validate_codigoREEUP(self, value):
         sms = 'Entrada no valida en REEUP.'
-        validarEntradaReeupUonei(value, sms)
+        validarEntradaNumeroConPunto(value, sms)
         sms = 'El campo Codigo REEUP debe tener una longitd de hasta 10 caracteres.'
         validarLongitudMaxima(value, 10, sms)
         return value
@@ -431,7 +431,7 @@ class contratoLicenciaPersonaJuridicaSerializer(serializers.ModelSerializer):
 
     def validate_codigoOnei(self, value):
         sms = 'Entrada no valida en Codigo ONEI.'
-        validarEntradaReeupUonei(value, sms)
+        validarEntradaNumeroConPunto(value, sms)
         sms = 'El campo Codigo ONEI debe tener una longitd de hasta 10 caracteres.'
         validarLongitudMaxima(value, 10, sms)
         return value

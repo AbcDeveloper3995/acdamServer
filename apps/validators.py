@@ -33,8 +33,8 @@ def validarSoloNumerosYletras(value, sms):
         raise serializers.ValidationError([sms])
     return value
 
-# FUNCION PARA VALIDAR SOLO LOS CAMPOS ONEI Y REEUP
-def validarEntradaReeupUonei(value, sms):
+# FUNCION PARA VALIDAR SOLO LOS CAMPOS ONEI , REEUP Y TODOS LOS CAMPOS QUE IMPLIQUE DINERO EN RECAUDACION
+def validarEntradaNumeroConPunto(value, sms):
     p = re.compile(u"[.0-9 ]+$")
     m = p.match(value)
     if not m:

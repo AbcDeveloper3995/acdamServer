@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, status
@@ -160,6 +162,13 @@ class recaudacionViewSet(viewsets.ModelViewSet):
         data = getElementosPaginados(self.kwargs['pk'], Recaudacion, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'], url_path='getRecaudacionActual')
+    def getRecaudacionActual(self, request, *args, **kwargs):
+        date = datetime.datetime.now().date()
+        contrato = Recaudacion.objects.filter(fechaCreacion=date)
+        serializer = self.list_serializer_class(contrato, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 #API DE CREDITO
 class creditoViewSet(viewsets.ModelViewSet):
     serializer_class = creditoSerializer
@@ -210,3 +219,50 @@ class creditoViewSet(viewsets.ModelViewSet):
     def paginado(self, request, *args, **kwargs):
         data = getElementosPaginados(self.kwargs['pk'], Credito, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
+
+
+#API DE RESUMEN  RECAUDACION DIARIA
+class resumenRecaudacionDiariaViewSet(viewsets.ModelViewSet):
+    serializer_class = resumenRecaudacionSerializer
+    list_serializer_class = resumenRecaudacionListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.list_serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'El total de los ingresos de hoy se han registrado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        credito = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(credito)
+        return Response({'message': 'Detalles del credito', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        if self.get_queryset(pk):
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Credito modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Credito no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        credito = self.get_queryset(pk)
+        if credito:
+            credito.delete()
+            return Response({'message': 'Credito eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Credito no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
