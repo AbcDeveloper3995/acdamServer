@@ -85,3 +85,25 @@ class ResumenRecaudacionDiaria(models.Model):
 
     def __str__(self):
         return f'Resumen del dia: {self.fechaCreacion}.'
+    
+class RecaudacionMensual(models.Model):
+    codigo = models.PositiveIntegerField(verbose_name='Codigo', unique=True, blank=True, null=True)
+    fronteraEstatal = models.CharField(verbose_name='Frontera Estatal', default='En Frontera Estatal', max_length=50, blank=False, null=False)
+    planFronteraEstatal = models.DecimalField(verbose_name='Plan Frontera Estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    realFronteraEstatal = models.DecimalField(verbose_name='Real Frontera Estatal', max_digits=11, decimal_places=2, blank=True, null=True)
+    fronteraTCP = models.CharField(verbose_name='Frontera TCP', default='En Frontera TCP', max_length=50, blank=False, null=False)
+    planFronteraTCP = models.DecimalField(verbose_name='Plan Frontera TCP', max_digits=11, decimal_places=2, blank=True, null=True)
+    realFronteraTCP = models.DecimalField(verbose_name='Real Frontera TCP', max_digits=11, decimal_places=2, blank=True, null=True)
+    sociedad = models.CharField(verbose_name='Sociedad', default='En Sociedad', max_length=50, blank=False, null=False)
+    planSociedad = models.DecimalField(verbose_name='Plan En Sociedad', max_digits=11, decimal_places=2, blank=True, null=True)
+    realSociedad = models.DecimalField(verbose_name='Real En Sociedad', max_digits=11, decimal_places=2, blank=True, null=True)
+    devolucion = models.DecimalField(verbose_name='Devolucion', max_digits=11, decimal_places=2, default=0, blank=True, null=True)
+
+    class Meta:
+        db_table = 'RecaudacionMensual'
+        verbose_name = 'RecaudacionMensual'
+        verbose_name_plural = 'RecaudacionMensual'
+
+
+    def __str__(self):
+        return f'Resumen del: {self.codigo}.'

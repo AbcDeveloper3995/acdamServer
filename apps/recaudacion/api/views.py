@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.shortcuts import get_object_or_404
 
@@ -266,3 +267,65 @@ class resumenRecaudacionDiariaViewSet(viewsets.ModelViewSet):
             credito.delete()
             return Response({'message': 'Credito eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Credito no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+#API DE RECAUDACION MENSUAL
+class recaudacionMensualViewSet(viewsets.ModelViewSet):
+    serializer_class = recaudacionMensualSerializer
+    list_serializer_class = recaudacionMensualListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.list_serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'El plan se ha establecido correctamente.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        plan = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(plan)
+        return Response({'message': 'Detalles del plan', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        if self.get_queryset(pk):
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Plan modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Plan no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        plan = self.get_queryset(pk)
+        if plan:
+            plan.delete()
+            return Response({'message': 'Plan eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Plan no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='getPlan')
+    def getPlan(self, request, *args, **kwargs):
+        plan = list(RecaudacionMensual.objects.filter(codigo=self.kwargs['pk'])).pop()
+        serializer = recaudacionMensualListarSerializer(plan)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='actualizarReal')
+    def actualizarReal(self, request, *args, **kwargs):
+        real = json.loads(self.kwargs['pk'])
+        codigo = real.get('codigo')
+        realFronteraEstatal = float(real.get('realFronteraEstatal').replace(",","."))
+        realFronteraTCP = float(real.get('realFronteraTCP').replace(",","."))
+        realSociedad = float(real.get('realSociedad').replace(",","."))
+        RecaudacionMensual.objects.filter(codigo=codigo).update(realFronteraEstatal=realFronteraEstatal,realFronteraTCP=realFronteraTCP,realSociedad=realSociedad)
+        return Response({"message":'La recaudacion real se ha actualizado correctamenete.'}, status=status.HTTP_200_OK)

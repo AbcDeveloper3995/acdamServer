@@ -124,7 +124,7 @@ class resumenRecaudacionListarSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.id,
-            'fechaCreacion': instance.fechaCreacion,
+            'fechaCreacion': instance.fechaCreacion.day,
             'totalMetropolitanoEstatal': instance.totalMetropolitanoEstatal,
             'totalMetropolitanoNoEstatal': instance.totalMetropolitanoNoEstatal,
             'totalBfiEstatal': instance.totalBfiEstatal,
@@ -136,4 +136,27 @@ class resumenRecaudacionListarSerializer(serializers.ModelSerializer):
 class resumenRecaudacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResumenRecaudacionDiaria
+        fields = '__all__'
+
+# SERIALIZADORES DE LA API RECAUDACION MENSUAL
+class recaudacionMensualListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecaudacionMensual
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'planFronteraEstatal': instance.planFronteraEstatal,
+            'realFronteraEstatal': instance.realFronteraEstatal,
+            'planFronteraTCP': instance.planFronteraTCP,
+            'realFronteraTCP': instance.realFronteraTCP,
+            'planSociedad': instance.planSociedad,
+            'realSociedad': instance.realSociedad,
+            'devolucion': instance.devolucion,
+        }
+
+class recaudacionMensualSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecaudacionMensual
         fields = '__all__'
