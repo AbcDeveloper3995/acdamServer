@@ -99,7 +99,6 @@ class creditoListarSerializer(serializers.ModelSerializer):
         return {
             'id': instance.id,
             'fk_utilizador': instance.fk_utilizador.nombre,
-            'fk_sucursal': instance.fk_sucursal.codigo,
             'importe': instance.importe,
             'provincia': instance.provincia,
             'municipio': instance.municipio,

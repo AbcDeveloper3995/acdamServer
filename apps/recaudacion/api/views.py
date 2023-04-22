@@ -1,6 +1,7 @@
 import datetime
 import json
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, status
@@ -216,10 +217,124 @@ class creditoViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Credito eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Credito no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def getImportesPorProvincia(self, provincias, arrayImportes, obj):
+        arrayImportes.append(float(obj.importe))
+        provincias[obj.provincia] = arrayImportes
+        return provincias
+
+    def getTotalImportesPorProvincia(self, provincias, array):
+        for i in provincias.values():
+            suma = 0
+            for j in i:
+                suma += j
+            array.append(suma)
+        return array
+
     @action(detail=True, methods=['get'], url_path='paginado')
     def paginado(self, request, *args, **kwargs):
         data = getElementosPaginados(self.kwargs['pk'], Credito, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='resumenProvincias')
+    def resumenProvincias(self, request, *args, **kwargs):
+        data, provincias, creditos , aux, totalesCheques, totalesTransferencias = {}, {}, [], [], [], []
+        #DECLARACION DE LAS LISTAS PARA TODOS LOS IMPORTES CHEQUES DE CADA PROVINCIA
+        importePRcheque, importeARTcheque, importeHABcheque, importeMAYcheque, importeMTZcheque, importeVCLcheque, importeCFGcheque = [], [], [], [], [], [], []
+        importeSSPcheque, importeCAVcheque, importeTUNcheque, importeHOLcheque, importeGRMcheque, importeSTGcheque, importeGTMcheque  = [], [], [], [], [], [], []
+        importeISJcheque, importeCMGcheque = [], []
+        # DECLARACION DE LAS LISTAS PARA TODOS LOS IMPORTES TRANSFERENCIAS DE CADA PROVINCIA
+        importePRtransferencia, importeARTtransferencia, importeHABtransferencia, importeMTZtransferencia, importeVCLtransferencia, importeCFGtransferencia = [], [], [], [], [], []
+        importeSSPtransferencia, importeCAVtransferencia, importeTUNtransferencia, importeHOLtransferencia, importeGRMtransferencia, importeSTGtransferencia = [], [], [], [], [], []
+        importeGTMtransferencia, importeISJtransferencia, importeCMGtransferencia, importeMAYtransferencia = [], [], [], []
+        mes = self.kwargs['pk']
+        queryCheque = Credito.objects.filter(Q(transferencia='') | Q(transferencia=None), fk_recaudacion__fechaCreacion__month=mes)
+        queryTransferencia = Credito.objects.filter(Q(cheque='') | Q(cheque=None), fk_recaudacion__fechaCreacion__month=mes)
+
+        #PROCESO DE OBTENCION DE LOS IMPORTES CHEQUES POR PROVINCIAS
+        for i in queryCheque:
+            if i.provincia == 'Pinar del Rio':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importePRcheque, i)
+            elif i.provincia == 'Artemisa':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeARTcheque, i)
+            elif i.provincia == 'La Habana':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeHABcheque, i)
+            elif i.provincia == 'Mayabeque':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeMAYcheque, i)
+            elif i.provincia == 'Matanzas':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeMTZcheque, i)
+            elif i.provincia == 'Villa Clara':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeVCLcheque, i)
+            elif i.provincia == 'Cienfuegos':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCFGcheque, i)
+            elif i.provincia == 'Santi Spiritu':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeSSPcheque, i)
+            elif i.provincia == 'Ciego de Avila':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCAVcheque, i)
+            elif i.provincia == 'Camaguey':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCMGcheque, i)
+            elif i.provincia == 'Las Tunas':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeTUNcheque, i)
+            elif i.provincia == 'Holguin':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeHOLcheque, i)
+            elif i.provincia == 'Granma':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeGRMcheque, i)
+            elif i.provincia == 'Santiago de Cuba':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeSTGcheque, i)
+            elif i.provincia == 'Guantanamo':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeGTMcheque, i)
+            else:
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeISJcheque, i)
+        data['totalesCheques'] = self.getTotalImportesPorProvincia(provincias, totalesCheques)
+        aux.append(data)
+
+        # PROCESO DE OBTENCION DE LOS IMPORTES TRANSFERENCIAS POR PROVINCIAS
+        data, provincias = {}, {}
+        for i in queryTransferencia:
+            if i.provincia == 'Pinar del Rio':
+                data['transferencia'] = self.getImportesPorProvincia(provincias, importePRtransferencia, i)
+            elif i.provincia == 'Artemisa':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeARTtransferencia, i)
+            elif i.provincia == 'La Habana':
+                data['transferencia'] = self.getImportesPorProvincia(provincias, importeHABtransferencia, i)
+            elif i.provincia == 'Mayabeque':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeMAYtransferencia, i)
+            elif i.provincia == 'Matanzas':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeMTZtransferencia, i)
+            elif i.provincia == 'Villa Clara':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeVCLtransferencia, i)
+            elif i.provincia == 'Cienfuegos':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCFGtransferencia, i)
+            elif i.provincia == 'Santi Spiritu':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeSSPtransferencia, i)
+            elif i.provincia == 'Ciego de Avila':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCAVtransferencia, i)
+            elif i.provincia == 'Camaguey':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeCMGtransferencia, i)
+            elif i.provincia == 'Las Tunas':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeTUNtransferencia, i)
+            elif i.provincia == 'Holguin':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeHOLtransferencia, i)
+            elif i.provincia == 'Granma':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeGRMtransferencia, i)
+            elif i.provincia == 'Santiago de Cuba':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeSTGtransferencia, i)
+            elif i.provincia == 'Guantanamo':
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeGTMtransferencia, i)
+            else:
+                data['cheque'] = self.getImportesPorProvincia(provincias, importeISJtransferencia, i)
+        data['totalesTransferencias'] = self.getTotalImportesPorProvincia(provincias, totalesTransferencias)
+        aux.append(data)
+
+        # PROCESO DE OBTENCION DEL TOTAL GENERAL DE LOS IMPORTES CUEQUES + TRANSFERENCIAS POR CADA PROVINCIA
+        totalesGenerales = []
+        for i in range(len(totalesCheques)):
+            totalesGenerales.append(totalesCheques[i])
+        for i in range(len(totalesTransferencias)):
+            totalesGenerales[i] = totalesGenerales[i] + totalesTransferencias[i]
+        data['totalesGenerales'] = totalesGenerales
+
+        aux.append(data)
+        return Response({'creditos':aux}, status=status.HTTP_200_OK)
 
 
 #API DE RESUMEN  RECAUDACION DIARIA
