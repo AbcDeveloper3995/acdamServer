@@ -29,7 +29,7 @@ class Sucursal(models.Model):
 
 
 class Recaudacion(models.Model):
-    fechaCreacion = models.DateField(verbose_name='Fecha en que se crea la recaudacion', unique=True, auto_now=True)
+    fechaCreacion = models.DateField(verbose_name='Fecha en que se crea la recaudacion', unique=True)
     fechaEstadoCuenta = models.DateField(verbose_name='Fecha Estado de Cuenta')
     numeroEstadoCuenta = models.PositiveIntegerField(verbose_name='Numero de estado de cuenta', unique=True, blank=True, null=True)
     saldoAnterior = models.DecimalField(verbose_name='Saldo Anterior', max_digits=11, decimal_places=2, blank=True, null=True)

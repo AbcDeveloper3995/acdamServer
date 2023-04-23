@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from apps.recaudacion.models import *
 from apps.utils import formatoLargoProvincia
-from apps.validators import validarSoloLetras, validarNoNuloOvacio, validarEntradaNumeroConPunto
+from apps.validators import validarSoloLetras, validarNoNuloOvacio, validarEntradaNumeroConPunto, \
+    validarFechaMenorAfechaActual
 
 
 # SERIALIZADORES DE LA API CONCEPTO
@@ -67,6 +68,11 @@ class recaudacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recaudacion
         fields = '__all__'
+
+    def validate_fechaCreacion(self, value):
+        sms = 'El campo Fecha de la recaudacion no puede ser mayor a la fecha actual.'
+        validarFechaMenorAfechaActual(value, sms)
+        return value
 
     def validate_saldoAnterior(self, value):
         sms = 'El campo Saldo anterior es requerido.'

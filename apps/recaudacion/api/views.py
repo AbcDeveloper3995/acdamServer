@@ -164,11 +164,11 @@ class recaudacionViewSet(viewsets.ModelViewSet):
         data = getElementosPaginados(self.kwargs['pk'], Recaudacion, self.list_serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='getRecaudacionActual')
-    def getRecaudacionActual(self, request, *args, **kwargs):
-        date = datetime.datetime.now().date()
-        contrato = Recaudacion.objects.filter(fechaCreacion=date)
-        serializer = self.list_serializer_class(contrato, many=True)
+    @action(detail=False, methods=['get'], url_path='getRecaudacionUltimas4')
+    def getRecaudacionUltimas4(self, request, *args, **kwargs):
+        final = Recaudacion.objects.all().count()
+        query = Recaudacion.objects.all()[final-4:final]
+        serializer = self.list_serializer_class(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 #API DE CREDITO
@@ -189,6 +189,8 @@ class creditoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
+        if str(request.data['provincia']).__len__() == 2 or str(request.data['provincia']).__len__() == 3:
+            request.data['provincia'] = formatoLargoProvincia(request.data['provincia'])
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -232,7 +234,10 @@ class creditoViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='paginado')
     def paginado(self, request, *args, **kwargs):
-        data = getElementosPaginados(self.kwargs['pk'], Credito, self.list_serializer_class)
+        parametros = self.kwargs['pk'].split('-')
+        numeroPagina = parametros[0]
+        idRecaudacion = parametros[1]
+        data = getElementosPaginados(numeroPagina, Credito, self.list_serializer_class, idRecaudacion)
         return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'], url_path='resumenProvincias')
@@ -336,6 +341,21 @@ class creditoViewSet(viewsets.ModelViewSet):
         aux.append(data)
         return Response({'creditos':aux}, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['get'], url_path='acumuladoReal')
+    def getAcumuladoReal(self, request, *args, **kwargs):
+        data = {}
+        parametros = self.kwargs['pk'].split(',')
+        tipoFrontera, fecha, cont = parametros[0], parametros[1], 0
+        if tipoFrontera == '1':
+            query = Credito.objects.filter(Q(tipoEstatal=1) | Q(tipoEstatal=3), fk_recaudacion__fechaCreacion__lte=fecha).values('importe')
+        elif tipoFrontera == '2':
+            query = Credito.objects.filter(Q(tipoEstatal=2) | Q(tipoEstatal=4), fk_recaudacion__fechaCreacion__lte=fecha).values('importe')
+        else:
+            query = Credito.objects.filter(tipoEstatal=5, fk_recaudacion__fechaCreacion__lte=fecha).values('importe')
+        for i in query:
+            cont += i['importe']
+        data['real'] = cont
+        return Response(data, status=status.HTTP_200_OK)
 
 #API DE RESUMEN  RECAUDACION DIARIA
 class resumenRecaudacionDiariaViewSet(viewsets.ModelViewSet):

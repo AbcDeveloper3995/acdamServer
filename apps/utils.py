@@ -2,12 +2,16 @@ import datetime
 
 from django.core.paginator import Paginator
 
+from apps.recaudacion.models import Recaudacion
+
 #FUNCION QUE RETORNA UN DICCIONARIO CON LOS DATOS PAGINADOS, EL TOTAL DE PAGINAS Y LA PAGINA ACTUAL
-def getElementosPaginados(paginaActual, model, serializador):
+def getElementosPaginados(paginaActual, model, serializador, id=None):
     data, paginador = {}, None
-    if model.__name__ == 'Credito':
-        date = datetime.datetime.now().date()
-        paginador = Paginator(model.objects.filter(fk_recaudacion__fechaCreacion=date), 25)
+    if model.__name__ == 'Credito' and id == '': #Este caso es unicamente para la carga inicial no de error
+        paginador = Paginator(model.objects.none(), 1)
+    elif model.__name__ == 'Credito' and id != '':
+        obj = Recaudacion.objects.get(pk=id)
+        paginador = Paginator(model.objects.filter(fk_recaudacion__fechaCreacion=obj.fechaCreacion), 25)
     elif model.__name__ == 'Usuario':
         paginador = Paginator(model.objects.filter(is_active=True), 25)
     else:
