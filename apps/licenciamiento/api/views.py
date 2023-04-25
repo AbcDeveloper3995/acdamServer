@@ -253,7 +253,7 @@ class representanteViewSet(viewsets.ModelViewSet):
         if representante:
             serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
             if serializer.is_valid():
-                self.limpiarYasignarCamposMTM(representante.fk_municipio, request.data['fk_municipio'])
+                self.limpiarYasignarCamposMTM(representante.fk_municipiosAtendidos, request.data['fk_municipiosAtendidos'])
                 self.limpiarYasignarCamposMTM(representante.fk_utilizador, request.data['fk_utilizador'])
                 self.limpiarYasignarCamposMTM(representante.fk_sector, request.data['fk_sector'])
                 serializer.save()

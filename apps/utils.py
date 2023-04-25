@@ -8,7 +8,11 @@ from apps.recaudacion.models import Recaudacion
 def getElementosPaginados(paginaActual, model, serializador, id=None):
     data, paginador = {}, None
     if model.__name__ == 'Credito' and id == '': #Este caso es unicamente para la carga inicial no de error
-        paginador = Paginator(model.objects.none(), 1)
+        date = datetime.datetime.now().date()
+        try:
+            paginador = Paginator(model.objects.filter(fk_recaudacion__fechaCreacion=date), 25)
+        except:
+            paginador = Paginator(model.objects.none(), 1)
     elif model.__name__ == 'Credito' and id != '':
         obj = Recaudacion.objects.get(pk=id)
         paginador = Paginator(model.objects.filter(fk_recaudacion__fechaCreacion=obj.fechaCreacion), 25)

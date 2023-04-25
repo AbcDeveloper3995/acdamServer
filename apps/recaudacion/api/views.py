@@ -1,15 +1,22 @@
 import datetime
 import json
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from acdamBackend import settings
+from apps.licenciamiento.models import Representante
 from apps.recaudacion.api.serializers import *
 from apps.utils import getElementosPaginados
+
 
 #API DE CONCEPTO
 class conceptoViewSet(viewsets.ModelViewSet):
@@ -355,6 +362,57 @@ class creditoViewSet(viewsets.ModelViewSet):
         for i in query:
             cont += i['importe']
         data['real'] = cont
+        return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='enviarEmail')
+    def sendEmail(self, request, *args, **kwargs):
+        representantes = []
+        parametros = self.kwargs['pk'].split(',')
+        fecha, provincia = parametros[0], parametros[1]
+        date = datetime.datetime.now().date()
+        date = date - datetime.timedelta(days=1)
+        cuerpoCorreo, index = 'Buenos dias \n\n', ''
+
+        if fecha == '':
+            cuerpoCorreo += f'Ingresos dia {date} \n'
+            query = Credito.objects.filter(Q(cheque='') | Q(cheque=None), fk_recaudacion__fechaEstadoCuenta=date, provincia=formatoLargoProvincia(provincia))
+            objs = Representante.objects.filter(provincia=provincia).values('email')
+            for j in objs:
+                representantes.append(j['email'])
+            for i in query:
+                cuerpoCorreo += f'{i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}, F-{i.factura}\n' if i.factura != None else f'{i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}\n'
+
+        else:
+            query = Credito.objects.filter(Q(cheque='') | Q(cheque=None), fk_recaudacion__fechaEstadoCuenta__range=(fecha,date), provincia=formatoLargoProvincia(provincia))
+            objs = Representante.objects.filter(provincia=provincia).values('email')
+            for j in objs:
+                representantes.append(j['email'])
+            for i in query:
+                if i.fk_recaudacion.fechaEstadoCuenta != index:
+                    cuerpoCorreo += f'\nIngresos dia {i.fk_recaudacion.fechaEstadoCuenta} \n {i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}, F-{i.factura}\n' if i.factura != None else f'\nIngresos dia {i.fk_recaudacion.fechaEstadoCuenta} \n {i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}\n'
+                else:
+                    cuerpoCorreo += f'{i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}, F-{i.factura}\n' if i.factura != None else f'{i.transferencia}, {i.fk_utilizador.nombre}, ${i.importe}\n'
+                index = i.fk_recaudacion.fechaEstadoCuenta
+        cuerpoCorreo += '\n\nSaludos.'
+        data = {}
+        try:
+            emailServidor = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+            emailServidor.starttls()
+            emailServidor.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+
+            email = representantes
+            sms = MIMEMultipart()
+            sms['From'] = settings.EMAIL_HOST_USER
+            sms['To'] = ','.join(email)
+            sms['Subject'] = 'Ingresos Creditos'
+
+            content = cuerpoCorreo
+            sms.attach(MIMEText(content))
+            emailServidor.sendmail(settings.EMAIL_HOST_USER, email, sms.as_string())
+            data['sms'] = f'Se le ha enviado un correo a los representantes de la provincia {formatoLargoProvincia(provincia)} correctamente.'
+        except Exception as e:
+            print(str(e))
+            data['error'] = 'Ha ocurrido un error. Contacte con el administrador.'
         return Response(data, status=status.HTTP_200_OK)
 
 #API DE RESUMEN  RECAUDACION DIARIA

@@ -29,8 +29,8 @@ class Sucursal(models.Model):
 
 
 class Recaudacion(models.Model):
-    fechaCreacion = models.DateField(verbose_name='Fecha en que se crea la recaudacion', unique=True)
-    fechaEstadoCuenta = models.DateField(verbose_name='Fecha Estado de Cuenta')
+    fechaCreacion = models.DateField(verbose_name='Fecha en que se crea la recaudacion', auto_now=True)
+    fechaEstadoCuenta = models.DateField(verbose_name='Fecha Estado de Cuenta', unique=True)
     numeroEstadoCuenta = models.PositiveIntegerField(verbose_name='Numero de estado de cuenta', unique=True, blank=True, null=True)
     saldoAnterior = models.DecimalField(verbose_name='Saldo Anterior', max_digits=11, decimal_places=2, blank=True, null=True)
     saldoCierre = models.DecimalField(verbose_name='Saldo Cierre', max_digits=11, decimal_places=2, blank=True, null=True)
@@ -41,7 +41,7 @@ class Recaudacion(models.Model):
         verbose_name_plural = 'Recaudaciones'
 
     def __str__(self):
-        return f'Recaudacion del: {self.fechaCreacion}'
+        return f'Recaudacion del: {self.fechaEstadoCuenta}'
 
 
 class Credito(models.Model):
