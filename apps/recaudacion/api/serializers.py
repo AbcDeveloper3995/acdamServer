@@ -165,3 +165,43 @@ class recaudacionMensualSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecaudacionMensual
         fields = '__all__'
+
+# SERIALIZADORES DE LA API REPORTE COBRO UTILIZADOR
+class reporteCobroUtilizadorListarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReporteCobroUtilizador
+        fields = '__all__'
+
+    def getChequeOtranfers(self, instance):
+        if instance.fk_credito.transferencia == None or instance.fk_credito.transferencia == '':
+            return instance.fk_credito.cheque
+        return instance.fk_credito.transferencia
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'factura': instance.fk_credito.factura,
+            'noReporteFecha': instance.numeroReporteFecha,
+            'chequeTransfer': self.getChequeOtranfers(instance),
+            'fechaChequeTransfer': instance.fk_credito.fk_recaudacion.fechaEstadoCuenta,
+            'cobrado': instance.fk_credito.importe,
+            'montoMusicaViva': instance.montoMusicaViva,
+            'montoMusicaGrabada': instance.montoMusicaGrabada,
+            'montoDerecho': instance.montoDerecho,
+            'montoRadio': instance.montoRadio,
+            'montoTVmusica': instance.montoTVmusica,
+            'montoMora': instance.montoMora,
+            'montoTVaudiovisual': instance.montoTVaudiovisual,
+            'montoDramatico': instance.montoDramatico,
+            'montoCineAudiovisual': instance.montoCineAudiovisual,
+            'montoCineDramatico': instance.montoCineDramatico,
+            'montoBar': instance.montoBar,
+            'montoCafeteria': instance.montoCafeteria,
+            'montoRestaurante': instance.montoRestaurante,
+            'montoCNocturno': instance.montoCNocturno,
+        }
+
+class reporteCobroUtilizadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReporteCobroUtilizador
+        fields = '__all__'

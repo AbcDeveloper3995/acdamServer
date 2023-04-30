@@ -130,7 +130,7 @@ class usuarioViewSet(viewsets.GenericViewSet):
 
     def update(self, request, pk=None):
          usuario = self.get_object(pk)
-         serializer = updateUsuarioSerializer(usuario, data=request.data)
+         serializer = usuarioSerializer(usuario, data=request.data)
          if serializer.is_valid():
              usuario.groups.clear()
              for i in request.data['groups']:

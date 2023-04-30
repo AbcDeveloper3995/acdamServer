@@ -9,5 +9,6 @@ router.register(r'recaudacion', recaudacionViewSet, basename='recaudacionViewSet
 router.register(r'credito', creditoViewSet, basename='creditoViewSet'),
 router.register(r'resumenRecaudacion', resumenRecaudacionDiariaViewSet, basename='resumenRecaudacionDiariaViewSet'),
 router.register(r'recaudacionMensual', recaudacionMensualViewSet, basename='recaudacionMensualViewSet'),
+router.register(r'reporteCobroUtilizador', reporteCobroUtilizadorViewSet, basename='reporteCobroUtilizadorViewSet'),
 
 urlpatterns = router.urls

@@ -269,6 +269,11 @@ class representanteViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Representante eliminado correctamente '}, status=status.HTTP_200_OK)
         return Response({'message': 'Representante no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def limpiarYasignarCamposMTM(self, campo, lista):
+        campo.clear()
+        for i in lista:
+            campo.add(i)
+
     @action(detail=True, methods=['get'], url_path='paginado')
     def paginado(self, request, *args, **kwargs):
         data = getElementosPaginados(self.kwargs['pk'], Representante, self.list_serializer_class)
@@ -308,10 +313,27 @@ class representanteViewSet(viewsets.ModelViewSet):
         serializer = municipioSerializer(municipios, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def limpiarYasignarCamposMTM(self, campo, lista):
-        campo.clear()
-        for i in lista:
-            campo.add(i)
+
+    @action(detail=True, methods=['get'], url_path='getRepresentantesProvincia')
+    def getRepresentantesProvincia(self, request, *args, **kwargs):
+        slug = self.kwargs['pk']
+        query = Representante.objects.filter(provincia=slug)
+        serializer = representanteSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='getUtilizadores')
+    def getUtilizadores(self, request, *args, **kwargs):
+        data, aux = {}, []
+        idRepresentante = self.kwargs['pk']
+        query = Representante.objects.filter(pk=idRepresentante).values('nombre', 'apellidos', 'fk_utilizador')
+        data['nombre'] = query[0]['nombre']
+        data['apellidos'] = query[0]['apellidos']
+        for i in query:
+            obj = Utilizador.objects.get(pk=i['fk_utilizador'])
+            serializer = utilizadorSerializer(obj)
+            aux.append(serializer.data)
+        data['utilizadores'] = aux
+        return Response(data, status=status.HTTP_200_OK)
 
 
 #API DE CONTRATO  LICENCIA ESTATAL
@@ -396,10 +418,12 @@ class contratoLicenciaEstatalViewSet(viewsets.ModelViewSet):
             anexosTRD = Anexo72TRD.objects.filter(fk_contratoLicenciaEstatal__pk=id)
             if anexosCimex.exists():
                 data['indicador'] = 3
-            if anexosGaviota.exists():
+            elif anexosGaviota.exists():
                 data['indicador'] = 4
-            if anexosTRD.exists():
+            elif anexosTRD.exists():
                 data['indicador'] = 5
+            else:
+                data['indicador'] = 6
         else:
             data['indicador'] = 6
         return Response(data, status=status.HTTP_200_OK)

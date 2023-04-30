@@ -522,3 +522,67 @@ class recaudacionMensualViewSet(viewsets.ModelViewSet):
         realSociedad = float(real.get('realSociedad').replace(",","."))
         RecaudacionMensual.objects.filter(codigo=codigo).update(realFronteraEstatal=realFronteraEstatal,realFronteraTCP=realFronteraTCP,realSociedad=realSociedad)
         return Response({"message":'La recaudacion real se ha actualizado correctamenete.'}, status=status.HTTP_200_OK)
+
+#API DE REPORTE COBRO UTILIZADOR
+class reporteCobroUtilizadorViewSet(viewsets.ModelViewSet):
+    serializer_class = reporteCobroUtilizadorSerializer
+    list_serializer_class = reporteCobroUtilizadorListarSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.list_serializer_class.Meta.model.objects.all()
+        return self.serializer_class.Meta.model.objects.filter(id=pk).first()
+
+    def get_object(self, pk):
+        return get_object_or_404(self.list_serializer_class.Meta.model, pk=pk)
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.list_serializer_class(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        id = Credito.objects.filter(Q(cheque=request.data['fk_credito']) | Q(transferencia=request.data['fk_credito'])).values('id')
+        request.data['fk_credito'] = id[0]['id']
+        request.data['numeroReporteFecha'] = self.formatearNoReporteFecha(request.data['numeroReporte'],request.data['fecha'])
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'El reporte se ha establecido correctamente.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        plan = self.get_object(self.kwargs['pk'])
+        serializer = self.serializer_class(plan)
+        return Response({'message': 'Detalles del reporte', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        if self.get_queryset(pk):
+            serializer = self.serializer_class(self.get_queryset(pk), data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Reporte modificado correctamente', 'data': serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Reporte no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        plan = self.get_queryset(pk)
+        if plan:
+            plan.delete()
+            return Response({'message': 'Reporte eliminado correctamente '}, status=status.HTTP_200_OK)
+        return Response({'message': 'Reporte no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def formatearNoReporteFecha(self,numero,fecha):
+        formato = fecha.split('-')
+        dia = formato[2]
+        mes = formato[1]
+        ano = formato[0]
+        formato = f'{numero}/{dia}/{mes}/{ano}'
+        return formato
+
+    @action(detail=True, methods=['get'], url_path='getReportes')
+    def getReportes(self, request, *args, **kwargs):
+        mes = datetime.datetime.now().date().month
+        query = ReporteCobroUtilizador.objects.filter(fk_credito__fk_utilizador_id=self.kwargs['pk'], fechaCreacion__month=mes)
+        serializer = reporteCobroUtilizadorListarSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

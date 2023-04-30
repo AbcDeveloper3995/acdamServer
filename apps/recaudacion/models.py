@@ -107,3 +107,31 @@ class RecaudacionMensual(models.Model):
 
     def __str__(self):
         return f'Resumen del: {self.codigo}.'
+
+class ReporteCobroUtilizador(models.Model):
+    fk_credito = models.ForeignKey(Credito, verbose_name='Credito', blank=True, null=True, on_delete=models.CASCADE)
+    fechaCreacion = models.DateField(verbose_name='Fecha de creacion', auto_now=True)
+    numeroReporteFecha = models.CharField(verbose_name='No Reporte Cobro y Fecha', max_length=15, blank=True, null=True)
+    montoMusicaViva = models.DecimalField(verbose_name='Monto Musica Viva', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoMusicaGrabada = models.DecimalField(verbose_name='Monto Musica Grabada', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoDerecho = models.DecimalField(verbose_name='Monto Derecho', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoRadio = models.DecimalField(verbose_name='Monto Radio', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoTVmusica = models.DecimalField(verbose_name='Monto TV-Musica', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoMora = models.DecimalField(verbose_name='Monto Mora', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoTVaudiovisual = models.DecimalField(verbose_name='Monto TV-Audiovisual', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoDramatico = models.DecimalField(verbose_name='Monto Dramatico', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoCineAudiovisual = models.DecimalField(verbose_name='Monto Cine Audiovisual', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoCineDramatico = models.DecimalField(verbose_name='Monto Cine Dramatico', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoBar = models.DecimalField(verbose_name='Monto Bar', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoCafeteria = models.DecimalField(verbose_name='Monto Cafeteria', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoRestaurante = models.DecimalField(verbose_name='Monto Restaurante', max_digits=11, decimal_places=2, blank=True, null=True)
+    montoCNocturno = models.DecimalField(verbose_name='Monto Centro Nocturno', max_digits=11, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        db_table = 'ReporteCobroUtilizador'
+        verbose_name = 'ReporteCobroUtilizador'
+        verbose_name_plural = 'ReporteCobroUtilizadores'
+
+
+    def __str__(self):
+        return f'Resumen del dia: {self.fechaCreacion}. de {self.fk_credito.fk_utilizador.nombre}'

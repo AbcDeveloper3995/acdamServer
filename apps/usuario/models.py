@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from apps.licenciamiento.choices import CHOICE_PROVINCIA
+
+
 class Cargo(models.Model):
     nombre = models.CharField(verbose_name='Nombre', max_length=50, blank=False, null=False)
 
@@ -14,6 +17,8 @@ class Cargo(models.Model):
 
 class Usuario(AbstractUser):
     fk_cargo = models.ForeignKey(Cargo, verbose_name='Cargo', blank=True, null=True, on_delete=models.CASCADE)
+    provincia = models.CharField(verbose_name='Provincia que atiende', max_length=50, choices=CHOICE_PROVINCIA, blank=True,
+                                 null=True)
 
     class Meta:
         db_table = 'Usuario'

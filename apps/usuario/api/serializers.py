@@ -3,11 +3,10 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from apps.usuario.models import *
-
-#SERIALIZADORES DE LA API CARGO
+from apps.utils import formatoLargoProvincia
 from apps.validators import validarSoloLetras
 
-
+#SERIALIZADORES DE LA API CARGO
 class cargoListarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
@@ -34,7 +33,7 @@ class customTokenObtainPairSerializer(TokenObtainPairSerializer):
 class customUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'provincia')
 
     def to_representation(self, instance):
         return {
@@ -42,13 +41,14 @@ class customUsuarioSerializer(serializers.ModelSerializer):
             'nombre': instance.first_name,
             'apellidos': instance.last_name,
             'correo': instance.email,
+            'provincia': instance.provincia,
             'username': instance.username
         }
 
 class usuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'groups', 'password', 'fk_cargo')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'groups', 'password', 'fk_cargo', 'provincia')
 
     def validate_password(self, value):
         if len(value) < 8:
@@ -89,6 +89,7 @@ class usuarioListarSerializer(serializers.ModelSerializer):
             'email': instance.email,
             'password':instance.password,
             'fk_cargo': instance.fk_cargo.nombre,
+            'provincia': formatoLargoProvincia(instance.provincia),
             'groups': aux
         }
 

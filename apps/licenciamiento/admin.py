@@ -2,11 +2,15 @@ from django.contrib import admin
 
 from apps.licenciamiento.models import *
 
+class utilizadorAdmin(admin.ModelAdmin):
+    search_fields = ['nombre']
+    list_display = ('id', 'nombre')
+
 admin.site.register(Resolucion)
 admin.site.register(Sector)
 admin.site.register(Modalidad)
 admin.site.register(Municipio)
-admin.site.register(Utilizador)
+admin.site.register(Utilizador, utilizadorAdmin)
 admin.site.register(Representante)
 admin.site.register(ContratoMandatoRepresentante)
 admin.site.register(ContratoLicenciaEstatal)
