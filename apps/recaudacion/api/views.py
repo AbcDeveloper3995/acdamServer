@@ -509,7 +509,10 @@ class recaudacionMensualViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='getPlan')
     def getPlan(self, request, *args, **kwargs):
-        plan = list(RecaudacionMensual.objects.filter(codigo=self.kwargs['pk'])).pop()
+        query = RecaudacionMensual.objects.filter(codigo=self.kwargs['pk'])
+        if not query.exists():
+            return Response({'error': 'Aun no se ha creado un plan para este mes.'}, status=status.HTTP_400_BAD_REQUEST)
+        plan = list(query).pop()
         serializer = recaudacionMensualListarSerializer(plan)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -586,3 +589,83 @@ class reporteCobroUtilizadorViewSet(viewsets.ModelViewSet):
         query = ReporteCobroUtilizador.objects.filter(fk_credito__fk_utilizador_id=self.kwargs['pk'], fechaCreacion__month=mes)
         serializer = reporteCobroUtilizadorListarSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    '''En esta accion se va a ir recorriendo por cada utilizador del un representante lo que va recaudando mes a mes por concepto
+    y por modalidad, asi como su total real acumulado tanto por concepto y modalidad'''
+    @action(detail=True, methods=['get'], url_path='getGestionGeneral')
+    def getGestionGeneral(self, request, *args, **kwargs):
+        data, listadoConceptos, listadoModalidades = {}, [], []
+        # CONCEPTOS
+        musicaViva = {'index': 'Musica Viva', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        musicaGrabada = {'index': 'Musica Grabada', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        derecho = {'index': 'G.Derecho', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        radio = {'index': 'Radio', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        tvMusica = {'index': 'TV-Musica', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        mora = {'index': 'Mora', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        tvAudiovisual = {'index': 'TV-Audiovisual', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        dramaticoCultutra = {'index': 'Dramatico Cultura', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0,'diciembre': 0}
+        cineAudiovisual = {'index': 'Cine Audiovisual', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        cineDramatico = {'index': 'Cine Dramatico', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        # MODALIDADES
+        modalidadBar = {'index': 'Modalidad Bar', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0,'diciembre': 0}
+        modalidadCafeteria = {'index': 'Modalidad Cafeteria', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0,'noviembre': 0, 'diciembre': 0}
+        modalidadRestaurante = {'index': 'Modalidad Restaurante', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0,'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0, 'noviembre': 0, 'diciembre': 0}
+        modalidadCentroNocturno = {'index': 'Modalidad C/Nocturno', 'enero': 0, 'febrero': 0, 'marzo': 0, 'abril': 0, 'mayo': 0, 'junio': 0, 'julio': 0, 'agosto': 0, 'septiembre': 0, 'octubre': 0,'noviembre': 0, 'diciembre': 0}
+        #TOTALES CONCEPTOS
+        totalMusicaViva = totalMusciaGrabada = totalDerecho = totalRadio = totalTVmusica = totalMora = totalTVaudiovisual = totalDramatico = totalCineAudiovisual = totalCineDramatico = 0
+        # TOTALES MODALIDADES
+        totalBar = totalCafeteria = totalRestaurante = totalCentroNocturno = 0
+
+        query = Representante.objects.filter(pk=self.kwargs['pk'])
+
+        if not query.exists():
+            return Response({'error': 'No ha seleccionado un representante.'}, status=status.HTTP_400_BAD_REQUEST)
+        utilizadores = query[0].fk_utilizador.all()
+        for i in utilizadores:
+            objs = ReporteCobroUtilizador.objects.filter(fk_credito__fk_utilizador_id=i.pk)
+            for j in objs:
+                musicaViva, totalMusicaViva = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoMusicaViva, musicaViva, totalMusicaViva)
+                musicaGrabada, totalMusciaGrabada = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoMusicaGrabada, musicaGrabada, totalMusciaGrabada)
+                derecho, totalDerecho = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoDerecho, derecho, totalDerecho)
+                radio, totalRadio = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoRadio, radio, totalRadio)
+                tvMusica, totalTVmusica = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoTVmusica, tvMusica, totalTVmusica)
+                mora, totalMora = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoMora, mora, totalMora)
+                tvAudiovisual, totalTVaudiovisual = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoTVaudiovisual, tvAudiovisual, totalTVaudiovisual)
+                dramaticoCultutra, totalDramatico = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoDramatico, dramaticoCultutra, totalDramatico)
+                cineAudiovisual, totalCineAudiovisual = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoCineAudiovisual, cineAudiovisual, totalCineAudiovisual)
+                cineDramatico, totalCineDramatico = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoCineDramatico, cineDramatico, totalCineDramatico)
+                modalidadBar, totalBar = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoBar, modalidadBar, totalBar)
+                modalidadCafeteria, totalCafeteria = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoCafeteria, modalidadCafeteria, totalCafeteria)
+                modalidadRestaurante, totalRestaurante = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoRestaurante, modalidadRestaurante, totalRestaurante)
+                modalidadCentroNocturno, totalCentroNocturno = self.getTotalPorMesyTotalGeneral(j.fechaCreacion, j.montoCNocturno, modalidadCentroNocturno, totalCentroNocturno)
+
+        listadoConceptos.append(musicaViva)
+        listadoConceptos.append(musicaGrabada)
+        listadoConceptos.append(derecho)
+        listadoConceptos.append(radio)
+        listadoConceptos.append(tvMusica)
+        listadoConceptos.append(mora)
+        listadoConceptos.append(tvAudiovisual)
+        listadoConceptos.append(dramaticoCultutra)
+        listadoConceptos.append(cineAudiovisual)
+        listadoConceptos.append(cineDramatico)
+        data['conceptos'] = listadoConceptos
+        listadoModalidades.append(modalidadBar)
+        listadoModalidades.append(modalidadCafeteria)
+        listadoModalidades.append(modalidadRestaurante)
+        listadoModalidades.append(modalidadCentroNocturno)
+        data['modalidades'] = listadoModalidades
+        return Response(data, status=status.HTTP_200_OK)
+
+    def getTotalPorMesyTotalGeneral(self, fecha, atributo, data, total):
+        meses = {1: 'enero', 2: 'febrero', 3: 'febrero', 4: 'abril', 5: 'mayo', 6: 'junio', 7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'}
+        for i in range(1, 13):
+            if fecha.month == i:
+                suma = 0
+                suma += atributo
+                mes = meses[i]
+                aux = data[mes]
+                data[mes] = aux + suma
+        total += atributo
+        data['totalReal'] = total
+        return data, total
